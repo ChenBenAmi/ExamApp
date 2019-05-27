@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Exam App</string>
+    <string name="hero_name">Hero name</string>
+    <string name="abilities">Abilities</string>
+    <string name="the_hero_s_image">The hero\'s image</string>
+    <string name="hero_list">Heroes List</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="favorite_hero_icon">Favorite hero icon</string>
 </resources>
