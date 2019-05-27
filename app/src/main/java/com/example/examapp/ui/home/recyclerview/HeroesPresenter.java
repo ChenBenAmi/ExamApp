@@ -3,6 +3,7 @@ package com.example.examapp.ui.home.recyclerview;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -33,15 +34,15 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
         DatabaseHero databaseHero = list.get(position);
         heroViewHolder.mHeroName.setText(databaseHero.getTitle());
         heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
-//        Picasso.with(mContext).load(databaseHero.getImageUrl())
-//                .resize(250, 250)
-//                .into(heroViewHolder.mHeroImage);
+
         Glide.with(mContext)
                 .load(databaseHero.getImageUrl())
                 .apply(RequestOptions.circleCropTransform())
                 .apply(RequestOptions.overrideOf(250,250))
                 .into(heroViewHolder.mHeroImage);
-
+        if (!databaseHero.getFavorite()) {
+            heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
+        }
 
     }
 

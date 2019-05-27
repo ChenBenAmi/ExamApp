@@ -8,4 +8,9 @@
         android:id="@+id/dummy_data"
         android:title="Dummy"
         app:showAsAction="never" />
+
+    <item
+        android:id="@+id/delete"
+        android:title="delete"
+        app:showAsAction="never" />
 </menu>

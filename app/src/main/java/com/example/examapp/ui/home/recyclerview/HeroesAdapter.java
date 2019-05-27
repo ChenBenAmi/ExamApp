@@ -76,12 +76,14 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         @BindView(R.id.hero_image)
         ImageView mHeroImage;
 
+        @BindView(R.id.favorite_icon_image_view)
+        ImageView mFavoriteView;
+
         public HeroViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
-
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();

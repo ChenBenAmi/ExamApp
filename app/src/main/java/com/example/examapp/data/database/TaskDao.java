@@ -15,8 +15,11 @@ public interface TaskDao {
     @Insert
     void insert(DatabaseHero databaseHero);
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateFavorite(DatabaseHero databaseHero);
+    @Query("UPDATE HeroList SET mFavorite = :favorite WHERE mListPosition = :listPosition")
+    int updateFavorite(int listPosition, boolean favorite);
+
+    @Query("SELECT  mListPosition=:id FROM herolist Where mFavorite= 1")
+    boolean favoriteState(int id);
 
     @Query("Delete FROM Herolist")
     void clearTable();

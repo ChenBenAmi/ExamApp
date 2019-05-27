@@ -3,6 +3,7 @@ package com.example.examapp.ui.home;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -21,12 +22,10 @@ import butterknife.ButterKnife;
 
 public class HomeActivity extends AppCompatActivity implements HomeMvpView, HeroesAdapter.listItemClickListener {
 
+    private static final String TAG = "HomeActivity";
     private HeroesPresenter mHeroesPresenter;
     private HeroesAdapter mHeroesAdapter;
     private DbHelper dbHelper;
-
-
-
 
 
     @BindView(R.id.recycler_view)
@@ -39,7 +38,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         setContentView(R.layout.activity_home);
         setTitle(getResources().getString(R.string.hero_list));
         ButterKnife.bind(this);
-        dbHelper= DbHelper.getInstance(getApplicationContext());
+        dbHelper = DbHelper.getInstance(getApplicationContext());
         mHeroesPresenter = new HeroesPresenter(this);
         mHeroesPresenter.onAttach(this);
         mHeroesAdapter = new HeroesAdapter(this, this);
@@ -54,14 +53,40 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                List<DatabaseHero> heroList=dbHelper.taskDao().loadAllHeroes();
-                mHeroesAdapter.setTasks(heroList);
+                final List<DatabaseHero> heroList = dbHelper.taskDao().loadAllHeroes();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mHeroesAdapter.setTasks(heroList);
+                    }
+                });
+
             }
         });
     }
 
     @Override
-    public void onListItemClick(int position) {
+    public void onListItemClick(final int position) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean favorite = true;
+                if (dbHelper.taskDao().favoriteState(position)) {
+                    favorite = false;
+                    Log.i(TAG,"the value is true");
+                }
+                dbHelper.taskDao().updateFavorite(position,favorite);
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        mHeroesAdapter.notifyDataSetChanged();
+                    }
+                });
+            }
+        });
+
 
     }
 
@@ -78,10 +103,12 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         switch (item.getItemId()) {
 
             case R.id.dummy_data:
+                int listposition = mHeroesAdapter.getItemCount();
                 final DatabaseHero databaseHero = new DatabaseHero(
                         "chen"
                         , "Dummy"
-                        , "https://www.americangrit.com/wp-content/uploads/2017/09/wolverine.jpg", false);
+                        , "https://www.americangrit.com/wp-content/uploads/2017/09/wolverine.jpg"
+                        , false, listposition);
 
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
@@ -92,6 +119,14 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
                 });
 
                 return true;
+            case R.id.delete:
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        dbHelper.taskDao().clearTable();
+                    }
+                });
+
         }
         return super.onOptionsItemSelected(item);
     }
