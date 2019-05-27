@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.DatabaseHero;
@@ -39,6 +40,7 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
                 .load(databaseHero.getImageUrl())
                 .apply(RequestOptions.circleCropTransform())
                 .apply(RequestOptions.overrideOf(250,250))
+                .transition(DrawableTransitionOptions.withCrossFade())
                 .into(heroViewHolder.mHeroImage);
         if (!databaseHero.getFavorite()) {
             heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);

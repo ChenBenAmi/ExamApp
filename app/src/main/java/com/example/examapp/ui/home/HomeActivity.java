@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examapp.R;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
@@ -70,6 +71,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
                         if (databaseHero != null) {
                             Glide.with(getApplicationContext())
                                     .load(databaseHero.getImageUrl())
+                                    .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(mTitleImageView);
                             mToolBar.setTitle(databaseHero.getTitle());
                         }
