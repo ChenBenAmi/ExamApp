@@ -3,6 +3,7 @@ package com.example.examapp.ui.home.recyclerview;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.examapp.R;
 import com.example.examapp.data.database.DatabaseHero;
+import com.example.examapp.data.network.Hero;
 
 import java.util.List;
 
@@ -19,11 +21,12 @@ import butterknife.ButterKnife;
 
 public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHolder> {
 
-
+    private static final String TAG = "HeroesAdapter";
     private HeroesPresenter mHeroPresenter;
     private final listItemClickListener mOnClickListener;
     private static List<DatabaseHero> mHeroEntries;
     private Context mContext;
+    private List<Hero> values;
 
 
     public interface listItemClickListener {
@@ -34,6 +37,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         mHeroPresenter = new HeroesPresenter(context);
         this.mOnClickListener = mOnClickListener;
         this.mContext = context;
+
     }
 
     public static List<DatabaseHero> getHeroList() {
@@ -54,7 +58,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
 
     @Override
     public void onBindViewHolder(@NonNull HeroViewHolder heroViewHolder, int i) {
-        mHeroPresenter.onBind(heroViewHolder, i,mHeroEntries);
+        mHeroPresenter.onBind(heroViewHolder, i,values,values);
 
     }
     public void setTasks(List<DatabaseHero> taskEntries) {
@@ -64,6 +68,10 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
     @Override
     public int getItemCount() {
         return mHeroPresenter.getViewCount();
+    }
+    public void getList(List<Hero> repos) {
+        values = repos;
+        Log.i(TAG, values.toString());
     }
 
     public class HeroViewHolder extends RecyclerView.ViewHolder implements HeroesMvpView, View.OnClickListener {
@@ -83,12 +91,14 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+
         }
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
             mOnClickListener.onListItemClick(position);
         }
+
 
     }
 }

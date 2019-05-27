@@ -71,6 +71,7 @@ public class DatabaseHero {
     }
 
     public void setFavorite(boolean mFavorite) {
+
         this.mFavorite = mFavorite;
     }
 
