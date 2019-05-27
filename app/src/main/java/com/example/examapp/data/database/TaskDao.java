@@ -18,11 +18,14 @@ public interface TaskDao {
     @Query("UPDATE HeroList SET mFavorite = :favorite WHERE mListPosition = :listPosition")
     int updateFavorite(int listPosition, boolean favorite);
 
-    @Query("SELECT  mListPosition=:id FROM herolist Where mFavorite= 1")
+    @Query("SELECT  mListPosition=:id FROM herolist WHERE mFavorite= 1")
     boolean favoriteState(int id);
 
     @Query("UPDATE HeroList SET mFavorite=0")
     void listToFalse();
+
+    @Query("SELECT * FROM HeroList WHERE mFavorite=1")
+    DatabaseHero getHeroByPosition();
 
     @Query("Delete FROM Herolist")
     void clearTable();

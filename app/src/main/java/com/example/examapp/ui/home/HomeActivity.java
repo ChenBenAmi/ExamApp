@@ -3,10 +3,13 @@ package com.example.examapp.ui.home;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.examapp.R;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
@@ -31,6 +34,11 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
+    @BindView(R.id.title_image)
+    ImageView mTitleImageView;
+
+    @BindView(R.id.toolbar)
+    Toolbar mToolBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +62,18 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
             @Override
             public void run() {
                 final List<DatabaseHero> heroList = dbHelper.taskDao().loadAllHeroes();
+                final DatabaseHero databaseHero = dbHelper.taskDao().getHeroByPosition();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         mHeroesAdapter.setTasks(heroList);
+                        if (databaseHero != null) {
+                            Glide.with(getApplicationContext())
+                                    .load(databaseHero.getImageUrl())
+                                    .into(mTitleImageView);
+                            mToolBar.setTitle(databaseHero.getTitle());
+                        }
+
                     }
                 });
 
@@ -73,16 +89,17 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
                 boolean favorite = true;
                 if (dbHelper.taskDao().favoriteState(position)) {
                     favorite = false;
-                    Log.i(TAG,"the value is true");
+                    Log.i(TAG, "the value is true");
                 }
                 dbHelper.taskDao().listToFalse();
-                dbHelper.taskDao().updateFavorite(position,favorite);
+                dbHelper.taskDao().updateFavorite(position, favorite);
 
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
 
                         mHeroesAdapter.notifyDataSetChanged();
+
                     }
                 });
             }
