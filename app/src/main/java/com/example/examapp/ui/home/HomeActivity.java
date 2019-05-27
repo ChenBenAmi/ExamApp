@@ -75,6 +75,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
                     favorite = false;
                     Log.i(TAG,"the value is true");
                 }
+                dbHelper.taskDao().listToFalse();
                 dbHelper.taskDao().updateFavorite(position,favorite);
 
                 runOnUiThread(new Runnable() {
@@ -124,6 +125,14 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
                     @Override
                     public void run() {
                         dbHelper.taskDao().clearTable();
+                    }
+                });
+                return true;
+            case R.id.negative:
+                AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        dbHelper.taskDao().listToFalse();
                     }
                 });
 

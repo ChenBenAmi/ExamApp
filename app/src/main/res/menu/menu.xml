@@ -13,4 +13,8 @@
         android:id="@+id/delete"
         android:title="delete"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/negative"
+        android:title="false"
+        app:showAsAction="never" />
 </menu>

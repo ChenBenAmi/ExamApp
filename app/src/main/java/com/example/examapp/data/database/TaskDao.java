@@ -21,6 +21,9 @@ public interface TaskDao {
     @Query("SELECT  mListPosition=:id FROM herolist Where mFavorite= 1")
     boolean favoriteState(int id);
 
+    @Query("UPDATE HeroList SET mFavorite=0")
+    void listToFalse();
+
     @Query("Delete FROM Herolist")
     void clearTable();
 
