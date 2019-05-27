@@ -62,31 +62,11 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         dbHelper = DbHelper.getInstance(getApplicationContext());
         mHeroesPresenter = new HeroesPresenter(HomeActivity.this);
         mHeroesPresenter.onAttach(HomeActivity.this);
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("https://heroapps.co.il/employee-tests/android/")
-                .addConverterFactory(GsonConverterFactory.create());
-        Retrofit retrofit = builder.build();
+        mHeroesAdapter = new HeroesAdapter(this, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HomeActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
+        mHeroesPresenter.buildRetroFit(mRecyclerView,mHeroesAdapter);
 
-        ApiInterface client = retrofit.create(ApiInterface.class);
-        Call<List<Hero>> call = client.getHeroes();
-
-        call.enqueue(new Callback<List<Hero>>() {
-            @Override
-            public void onResponse(Call<List<Hero>> call, Response<List<Hero>> response) {
-                List<Hero> repos =response.body();
-                Log.i(TAG, response.body().get(0).toString());
-                mRecyclerView.setAdapter(mHeroesAdapter = new HeroesAdapter(HomeActivity.this, HomeActivity.this));
-                mHeroesAdapter.getList(repos);
-                mHeroesAdapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onFailure(Call<List<Hero>> call, Throwable t) {
-                Toast.makeText(HomeActivity.this, "Something wrong", Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
 //        final LiveData<List<DatabaseHero>> heroList = dbHelper.taskDao().loadAllHeroes();
@@ -147,24 +127,6 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-
-            case R.id.dummy_data:
-                int listposition = mHeroesAdapter.getItemCount();
-                final DatabaseHero databaseHero = new DatabaseHero(
-                        "Dummy data"
-                        , "Dummy data"
-                        , "https://www.americangrit.com/wp-content/uploads/2017/09/wolverine.jpg"
-                        , false, listposition);
-
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        dbHelper.taskDao().insert(databaseHero);
-
-                    }
-                });
-
-                return true;
             case R.id.delete:
                 AppExecutors.getInstance().diskIO().execute(new Runnable() {
                     @Override
@@ -173,14 +135,6 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
                     }
                 });
                 return true;
-            case R.id.negative:
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        dbHelper.taskDao().listToFalse();
-                    }
-                });
-
         }
         return super.onOptionsItemSelected(item);
     }

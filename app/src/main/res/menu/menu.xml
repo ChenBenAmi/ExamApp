@@ -5,16 +5,8 @@
     tools:context=".CatalogActivity">
 
     <item
-        android:id="@+id/dummy_data"
-        android:title="Dummy"
+        android:id="@+id/delete"
+        android:title="Delete DB"
         app:showAsAction="never" />
 
-    <item
-        android:id="@+id/delete"
-        android:title="delete"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/negative"
-        android:title="false"
-        app:showAsAction="never" />
 </menu>

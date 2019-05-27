@@ -19,6 +19,8 @@ public interface HeroesMvpPresenter<V extends HeroesMvpView> extends MvpPresente
 
     void setRecyclerView(RecyclerView recyclerView, HeroesAdapter heroesAdapter);
 
+    void buildRetroFit(RecyclerView recyclerView, HeroesAdapter heroesAdapter);
 
-    void getList(List<Hero> repos);
+
+
 }

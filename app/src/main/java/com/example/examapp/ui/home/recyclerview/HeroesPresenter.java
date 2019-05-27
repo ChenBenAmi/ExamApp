@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.GlideException;
@@ -12,11 +13,19 @@ import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.DatabaseHero;
+import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.Hero;
 import com.example.examapp.ui.base.BasePresenter;
+import com.example.examapp.ui.home.HomeActivity;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> implements HeroesMvpPresenter<V> {
 
@@ -36,6 +45,7 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
 
     @Override
     public void onBind(HeroesAdapter.HeroViewHolder heroViewHolder, int position, List<DatabaseHero> databaseHeroes, List<Hero> jsonHeroes) {
+
         if (jsonHeroes != null) {
             Hero jsonHero = jsonHeroes.get(position);
             String name = jsonHero.getTitle();
@@ -87,10 +97,31 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
     }
 
     @Override
-    public void getList(List<Hero> repos) {
-        values = repos;
-        Log.i(TAG, values.toString());
+    public void buildRetroFit(final RecyclerView recyclerView, final HeroesAdapter heroesAdapter) {
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("https://heroapps.co.il/employee-tests/android/")
+                .addConverterFactory(GsonConverterFactory.create());
+        Retrofit retrofit = builder.build();
+        ApiInterface client = retrofit.create(ApiInterface.class);
+        Call<List<Hero>> call = client.getHeroes();
+
+        call.enqueue(new Callback<List<Hero>>() {
+            @Override
+            public void onResponse(Call<List<Hero>> call, Response<List<Hero>> response) {
+                List<Hero> repos = response.body();
+                recyclerView.setAdapter(heroesAdapter);
+                heroesAdapter.getList(repos);
+                heroesAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<List<Hero>> call, Throwable t) {
+//                Toast.makeText(, "Something wrong", Toast.LENGTH_SHORT).show();
+                Log.i(TAG,"something is wrong");
+            }
+        });
     }
+
 
 
 }
