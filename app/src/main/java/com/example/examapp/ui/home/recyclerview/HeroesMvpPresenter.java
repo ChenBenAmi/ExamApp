@@ -21,6 +21,10 @@ public interface HeroesMvpPresenter<V extends HeroesMvpView> extends MvpPresente
 
     void buildRetroFit(RecyclerView recyclerView, HeroesAdapter heroesAdapter);
 
+    void insertToDb();
+
+    void deleteDb();
+
 
 
 }

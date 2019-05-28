@@ -22,12 +22,8 @@ public interface TaskDao {
     @Query("SELECT  mListPosition=:id FROM herolist WHERE mFavorite= 1")
     boolean favoriteState(int id);
 
-
-
     @Query("SELECT * FROM HeroList WHERE mFavorite=1")
     DatabaseHero getHeroByBoolean();
-
-
 
     @Query("Delete FROM Herolist")
     void clearTable();
@@ -43,6 +39,9 @@ public interface TaskDao {
 
     @Query("SELECT * FROM Herolist")
     LiveData<List<DatabaseHero>> loadAllHeroes();
+
+    @Query("SELECT * FROM HeroList")
+    boolean dataExist();
 
 
 }

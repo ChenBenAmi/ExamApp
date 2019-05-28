@@ -12,30 +12,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examapp.R;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
-import com.example.examapp.data.network.ApiInterface;
-import com.example.examapp.data.network.Hero;
 import com.example.examapp.ui.home.recyclerview.HeroesAdapter;
 import com.example.examapp.ui.home.recyclerview.HeroesPresenter;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeActivity extends AppCompatActivity implements HomeMvpView, HeroesAdapter.listItemClickListener {
 
@@ -65,17 +53,14 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         mHeroesAdapter = new HeroesAdapter(this, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(HomeActivity.this);
         mRecyclerView.setLayoutManager(layoutManager);
-        mHeroesPresenter.buildRetroFit(mRecyclerView,mHeroesAdapter);
-
-
-
-//        final LiveData<List<DatabaseHero>> heroList = dbHelper.taskDao().loadAllHeroes();
-//        heroList.observe(this, new Observer<List<DatabaseHero>>() {
-//            @Override
-//            public void onChanged(@Nullable List<DatabaseHero> list) {
-//                mHeroesAdapter.setTasks(list);
-//            }
-//        });
+        mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
+        final LiveData<List<DatabaseHero>> heroList = dbHelper.taskDao().loadAllHeroes();
+        heroList.observe(this, new Observer<List<DatabaseHero>>() {
+            @Override
+            public void onChanged(@Nullable List<DatabaseHero> list) {
+                mHeroesAdapter.setHeroEntries(list);
+            }
+        });
 
     }
 
@@ -93,9 +78,8 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 ////                }
 //            }
 //        });
-//
-//
 //    }
+
     @Override
     public void onListItemClick(final int position) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
@@ -128,12 +112,8 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
         switch (item.getItemId()) {
             case R.id.delete:
-                AppExecutors.getInstance().diskIO().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        dbHelper.taskDao().clearTable();
-                    }
-                });
+                mHeroesPresenter.buildRetroFit(mRecyclerView,mHeroesAdapter);
+                mHeroesPresenter.deleteDb();
                 return true;
         }
         return super.onOptionsItemSelected(item);

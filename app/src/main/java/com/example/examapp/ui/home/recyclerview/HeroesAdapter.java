@@ -58,10 +58,10 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
 
     @Override
     public void onBindViewHolder(@NonNull HeroViewHolder heroViewHolder, int i) {
-        mHeroPresenter.onBind(heroViewHolder, i,values,values);
+        mHeroPresenter.onBind(heroViewHolder, i,mHeroEntries,values);
 
     }
-    public void setTasks(List<DatabaseHero> taskEntries) {
+    public void setHeroEntries(List<DatabaseHero> taskEntries) {
         mHeroEntries = taskEntries;
         notifyDataSetChanged();
     }
@@ -69,6 +69,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
     public int getItemCount() {
         return mHeroPresenter.getViewCount();
     }
+
     public void getList(List<Hero> repos) {
         values = repos;
         Log.i(TAG, values.toString());
