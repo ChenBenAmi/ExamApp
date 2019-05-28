@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.AppExecutors;
@@ -15,6 +16,7 @@ import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.Hero;
+import com.example.examapp.ui.home.HomeMvpView;
 import com.example.examapp.ui.image.ViewImage;
 import com.example.examapp.ui.base.BasePresenter;
 
@@ -28,7 +30,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> implements HeroesMvpPresenter<V> {
+public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> implements HeroesMvpPresenter<V> {
 
     private static final String TAG = "HeroesPresenter";
     public static final String HERO_URL="HERO_URL";
@@ -37,8 +39,7 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
     private Context mContext;
     private DbHelper mDbHelper;
     private List<DatabaseHero> heroList = new ArrayList<>();
-    private boolean flag = false;
-    int count = 0;
+
 
     public HeroesPresenter(Context context) {
         super(context);
@@ -167,10 +168,17 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
 
     @Override
     public void insertToDb() {
-        for (int i = 0; i < heroList.size(); i++) {
-            mDbHelper.taskDao().insert(heroList.get(i));
-            Log.i(TAG, "THIS IS HERO NR " + i);
-        }
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < heroList.size(); i++) {
+
+                    mDbHelper.taskDao().insert(heroList.get(i));
+                    Log.i(TAG, "THIS IS HERO NR " + i);
+                }
+            }
+        });
+
 
     }
 
@@ -183,11 +191,56 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
 
     }
 
+    @Override
+    public String getImage() {
+        if (DataManager.getInstance(mContext).getAppImage() != null) {
+            String imageUrl=DataManager.getInstance(mContext).getAppImage();
+            return imageUrl;
+
+        }
+        return null;
+    }
+
+    @Override
+    public String getTitle() {
+        if (DataManager.getInstance(mContext).getAppTitle() != null) {
+            String AppTitle=DataManager.getInstance(mContext).getAppTitle();
+            return AppTitle;
+        }
+        return null;
+    }
+
+    @Override
+    public void onItemClicked(int position, final String title) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                boolean favorite = true;
+                if (mDbHelper.taskDao().favoriteState(title)) {
+                    favorite = false;
+                    Log.i(TAG, "the value is true");
+                }
+                mDbHelper.taskDao().listToFalse();
+                final DatabaseHero databaseHero = mDbHelper.taskDao().getHeroByName(title);
+                databaseHero.setFavorite(true);
+                mDbHelper.taskDao().updateList(databaseHero);
+                getMvpView().setUpImageFromDb(databaseHero.getImageUrl());
+                        Log.i(TAG, "the title is " + databaseHero.getTitle());
+                        getMvpView().setUpTitleFromDb(title);
+
+
+                        DataManager.getInstance(mContext).setAppImage(databaseHero.getImageUrl());
+                        DataManager.getInstance(mContext).setAppTitle(title);
+
+
+            }
+        });
+    }
+
     public void imageToFull(String url,String heroName){
         Intent intent= new Intent(mContext,ViewImage.class);
         intent.putExtra(HERO_URL,url);
         intent.putExtra(HERO_NAME,heroName);
-
         mContext.startActivity(intent);
     }
 

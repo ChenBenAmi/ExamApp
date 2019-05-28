@@ -13,9 +13,7 @@ import android.widget.TextView;
 import com.example.examapp.R;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.network.Hero;
-import com.github.chrisbanes.photoview.PhotoView;
-
-import org.w3c.dom.Text;
+import com.example.examapp.ui.base.MvpView;
 
 import java.util.List;
 
@@ -80,7 +78,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         Log.i(TAG, values.toString());
     }
 
-    public class HeroViewHolder extends RecyclerView.ViewHolder implements HeroesMvpView, View.OnClickListener {
+    public class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, MvpView {
         @BindView(R.id.hero_name)
         TextView mHeroName;
 

@@ -20,7 +20,6 @@ public abstract class DbHelper extends RoomDatabase {
                         .getApplicationContext(), DbHelper
                         .class, DbHelper.DATABASE_NAME)
                         .fallbackToDestructiveMigration()
-                        .allowMainThreadQueries()
                         .build();
             }
         }

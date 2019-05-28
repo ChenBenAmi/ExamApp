@@ -4,17 +4,18 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examapp.R;
-import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.ui.home.recyclerview.HeroesAdapter;
@@ -30,8 +31,13 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     private static final String TAG = "HomeActivity";
     private HeroesPresenter mHeroesPresenter;
     private HeroesAdapter mHeroesAdapter;
-    private DbHelper dbHelper;
+private DbHelper dbHelper;
 
+    @BindView(R.id.app_bar_layout)
+    AppBarLayout mapp_bar_layout;
+
+    @BindView(R.id.nestedScrollView)
+    NestedScrollView mNestedScrollView;
 
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
@@ -47,13 +53,19 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
+
         dbHelper = DbHelper.getInstance(getApplicationContext());
+
         mHeroesPresenter = new HeroesPresenter(HomeActivity.this);
         mHeroesPresenter.onAttach(HomeActivity.this);
         mHeroesAdapter = new HeroesAdapter(this, this);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(HomeActivity.this);
-        mRecyclerView.setLayoutManager(layoutManager);
+
+        mHeroesPresenter.setRecyclerView(mRecyclerView, mHeroesAdapter);
         mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
+
+        setUpTitleFromSharedPrefs();
+        setUpImageFromSharedPrefs();
+
         final LiveData<List<DatabaseHero>> heroList = dbHelper.taskDao().loadAllHeroes();
         heroList.observe(this, new Observer<List<DatabaseHero>>() {
             @Override
@@ -64,41 +76,9 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     }
 
-    //    public void setUpTitle (){
-//        AppExecutors.getInstance().mainThread().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                DatabaseHero databaseHero = dbHelper.taskDao().getHeroByBoolean();
-////                if ( databaseHero!= null) {
-////                    Glide.with(getApplicationContext())
-////                            .load(databaseHero.getImageUrl())
-////                            .transition(DrawableTransitionOptions.withCrossFade())
-////                            .into(mTitleImageView);
-////                    mToolBar.setTitle(databaseHero.getTitle());
-////                }
-//            }
-//        });
-//    }
-
     @Override
     public void onListItemClick(final int position, final String title) {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-                public void run() {
-                    boolean favorite = true;
-                    Log.i(TAG,"the title is "+title);
-                    if (dbHelper.taskDao().favoriteState(title)) {
-                        favorite = false;
-                        Log.i(TAG, "the value is true");
-                    }
-                dbHelper.taskDao().listToFalse();
-                DatabaseHero databaseHero = dbHelper.taskDao().getHeroByName(title);
-                databaseHero.setFavorite(true);
-                dbHelper.taskDao().updateList(databaseHero);
-
-            }
-        });
-
+        mHeroesPresenter.onItemClicked(position, title);
     }
 
 
@@ -110,10 +90,8 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case R.id.delete:
-                mHeroesPresenter.buildRetroFit(mRecyclerView,mHeroesAdapter);
+        if (item.getItemId()==R.id.delete) {
+                mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
                 mHeroesPresenter.deleteDb();
                 return true;
         }
@@ -121,4 +99,43 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     }
 
 
+    @Override
+    public void setUpImageFromSharedPrefs() {
+        Glide.with(getApplicationContext())
+                .load(mHeroesPresenter.getImage())
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(mTitleImageView);
+    }
+
+    @Override
+    public void setUpTitleFromSharedPrefs() {
+        getSupportActionBar().setTitle(mHeroesPresenter.getTitle());
+    }
+
+    @Override
+    public void setUpImageFromDb(final String imageUrl) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Glide.with(getApplicationContext())
+                        .load(imageUrl)
+                        .transition(DrawableTransitionOptions.withCrossFade())
+                        .into(mTitleImageView);
+            }
+        });
+
+    }
+
+    @Override
+    public void setUpTitleFromDb(final String title) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mNestedScrollView.scrollTo(0, 0);
+                mapp_bar_layout.setExpanded(true);
+                getSupportActionBar().setTitle(title);
+            }
+        });
+
+    }
 }
