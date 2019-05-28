@@ -6,4 +6,6 @@
     <string name="hero_list">Heroes List</string>
     <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <string name="favorite_hero_icon">Favorite hero icon</string>
+    <string name="by_chen_ben_ami">* by Chen Ben Ami</string>
+    <string name="exam_app">Exam App</string>
 </resources>

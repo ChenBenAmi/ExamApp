@@ -9,7 +9,7 @@ import com.example.examapp.ui.base.BasePresenter;
 public class SplashPresenter<V extends SplashMvpView> extends BasePresenter<V> implements SplashMvpPresenter<V> {
 
     private Context mContext;
-    private static final long TIME = 100;
+    private static final long TIME = 2000;
     public SplashPresenter(Context context) {
         super(context);
         this.mContext=context;

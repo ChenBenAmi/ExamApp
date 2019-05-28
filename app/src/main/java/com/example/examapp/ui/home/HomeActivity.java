@@ -12,17 +12,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examapp.R;
 import com.example.examapp.data.database.DatabaseHero;
-import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.ui.home.recyclerview.HeroesAdapter;
 import com.example.examapp.ui.home.recyclerview.HeroesPresenter;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -33,7 +29,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     private HeroesAdapter mHeroesAdapter;
 
     @BindView(R.id.app_bar_layout)
-    AppBarLayout mapp_bar_layout;
+    AppBarLayout mApp_bar_layout;
 
     @BindView(R.id.nestedScrollView)
     NestedScrollView mNestedScrollView;
@@ -123,7 +119,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
             @Override
             public void run() {
                 mNestedScrollView.scrollTo(0, 0);
-                mapp_bar_layout.setExpanded(true);
+                mApp_bar_layout.setExpanded(true);
                 getSupportActionBar().setTitle(title);
             }
         });
