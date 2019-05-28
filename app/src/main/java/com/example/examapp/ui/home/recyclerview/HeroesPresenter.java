@@ -37,8 +37,9 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
     DataManager mDataManager;
     private Context mContext;
     private DbHelper mDbHelper;
-    private List<DatabaseHero> heroList=new ArrayList<>();
-
+    private List<DatabaseHero> heroList = new ArrayList<>();
+    private boolean flag = false;
+    int count = 0;
 
     public HeroesPresenter(Context context) {
         super(context);
@@ -49,7 +50,7 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
 
 
     @Override
-    public void onBind(final HeroesAdapter.HeroViewHolder heroViewHolder,  int position,  List<DatabaseHero> databaseHeroes,  List<Hero> jsonHeroes) {
+    public void onBind(final HeroesAdapter.HeroViewHolder heroViewHolder, final int position, final List<DatabaseHero> databaseHeroes, List<Hero> jsonHeroes) {
         if (heroList.size() < 11) {
 
             if (jsonHeroes != null) {
@@ -89,40 +90,41 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
                 final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false, position);
                 heroList.add(databaseHero);
                 Log.i(TAG, "THE SIZE IS " + heroList.size());
-                if (heroList.size()==11) {
-                    Log.i(TAG,"HELLO");
+                if (heroList.size() == 11) {
+                    Log.i(TAG, "HELLO");
                     insertToDb();
                 }
             }
         } else {
-            Log.i(TAG, "we are here now");
-            final DatabaseHero databaseHero = databaseHeroes.get(position);
-            heroViewHolder.mHeroName.setText(databaseHero.getTitle());
-            Log.i(TAG, databaseHero.getAbilities());
-            heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
-            AppExecutors.getInstance().mainThread().execute(new Runnable() {
+
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
                 @Override
                 public void run() {
-                    Glide.with(mContext)
-                            .load(databaseHero.getImageUrl())
-                            .apply(RequestOptions.circleCropTransform())
-                            .apply(RequestOptions.overrideOf(250, 250))
-                            .transition(DrawableTransitionOptions.withCrossFade())
-                            .into(heroViewHolder.mHeroImage);
+                    final DatabaseHero databaseHero = databaseHeroes.get(position);
+                    heroViewHolder.mHeroName.setText(databaseHero.getTitle());
+                    heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            Glide.with(mContext)
+                                    .load(databaseHero.getImageUrl())
+                                    .apply(RequestOptions.circleCropTransform())
+                                    .apply(RequestOptions.overrideOf(250, 250))
+                                    .transition(DrawableTransitionOptions.withCrossFade())
+                                    .into(heroViewHolder.mHeroImage);
+                        }
+                    });
+
+                    if (!databaseHero.getFavorite()) {
+                        heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
+                    }
+
+
                 }
             });
 
-            if (!databaseHero.getFavorite()) {
-                heroViewHolder.mFavoriteView.setVisibility(View.VISIBLE);
-            }
-
-
         }
     }
-
-
-
-
 
 
     @Override
@@ -167,19 +169,19 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
 
     @Override
     public void insertToDb() {
-        for (int i=0;i<heroList.size();i++) {
+        for (int i = 0; i < heroList.size(); i++) {
             mDbHelper.taskDao().insert(heroList.get(i));
-            Log.i(TAG,"THIS IS HERO NR "+i);
+            Log.i(TAG, "THIS IS HERO NR " + i);
         }
 
     }
 
     @Override
     public void deleteDb() {
-                heroList.clear();
-                Log.i(TAG,"SHOULD BE CLEARED");
-                mDbHelper.taskDao().clearTable();
-                heroList.clear();
+        heroList.clear();
+        Log.i(TAG, "SHOULD BE CLEARED");
+        mDbHelper.taskDao().clearTable();
+        heroList.clear();
 
     }
 
