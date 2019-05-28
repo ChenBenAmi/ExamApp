@@ -43,7 +43,7 @@ public class DatabaseHero {
         return mTitle;
     }
 
-    public void setTitle(String mTitle) {
+    private void setTitle(String mTitle) {
         this.mTitle = mTitle;
     }
 
@@ -51,7 +51,7 @@ public class DatabaseHero {
         return mAbilities;
     }
 
-    public void setAbilities(String mAbilities) {
+    private void setAbilities(String mAbilities) {
         this.mAbilities = mAbilities;
     }
 
@@ -59,7 +59,7 @@ public class DatabaseHero {
         return mImageUrl;
     }
 
-    public void setImageUrl(String mImageUrl) {
+    private void setImageUrl(String mImageUrl) {
         this.mImageUrl = mImageUrl;
     }
 

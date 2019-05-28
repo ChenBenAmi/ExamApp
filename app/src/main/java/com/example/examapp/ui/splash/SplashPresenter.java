@@ -10,7 +10,7 @@ public class SplashPresenter<V extends SplashMvpView> extends BasePresenter<V> i
 
     private Context mContext;
     private static final long TIME = 2000;
-    public SplashPresenter(Context context) {
+    SplashPresenter(Context context) {
         super(context);
         this.mContext=context;
     }

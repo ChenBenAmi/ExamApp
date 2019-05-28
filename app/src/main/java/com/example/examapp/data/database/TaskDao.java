@@ -16,14 +16,8 @@ public interface TaskDao {
     @Insert
     void insert(DatabaseHero databaseHero);
 
-    @Query("UPDATE HeroList SET mFavorite = :favorite WHERE mTitle = :title")
-    int updateFavorite(String title, boolean favorite);
-
     @Query("SELECT  mTitle=:title FROM herolist WHERE mFavorite= 1")
     boolean favoriteState(String title);
-
-    @Query("SELECT * FROM HeroList WHERE mFavorite=1")
-    DatabaseHero getHeroByBoolean();
 
     @Query("SELECT * FROM HeroList WHERE mTitle=:title")
     DatabaseHero getHeroByName(String title);
@@ -41,8 +35,9 @@ public interface TaskDao {
     @Query("SELECT * FROM Herolist")
     LiveData<List<DatabaseHero>> loadAllHeroes();
 
-    @Query("SELECT * FROM HeroList")
-    boolean dataExist();
+    @Query("SELECT * FROM herolist")
+    List<DatabaseHero> getAll();
+
 
 
 }

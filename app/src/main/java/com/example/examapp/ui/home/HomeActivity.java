@@ -1,5 +1,4 @@
 package com.example.examapp.ui.home;
-
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -25,7 +25,7 @@ import butterknife.ButterKnife;
 public class HomeActivity extends AppCompatActivity implements HomeMvpView, HeroesAdapter.listItemClickListener {
 
     private static final String TAG = "HomeActivity";
-    private HeroesPresenter mHeroesPresenter;
+    private HeroesPresenter<HomeActivity> mHeroesPresenter;
     private HeroesAdapter mHeroesAdapter;
 
     @BindView(R.id.app_bar_layout)
@@ -49,16 +49,16 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        mHeroesPresenter = new HeroesPresenter(HomeActivity.this);
+        mHeroesPresenter = new HeroesPresenter<>(HomeActivity.this);
         mHeroesPresenter.onAttach(HomeActivity.this);
         mHeroesAdapter = new HeroesAdapter(this, this);
 
         mHeroesPresenter.setRecyclerView(mRecyclerView, mHeroesAdapter);
+        setObservable();
         mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
 
         setUpTitleFromSharedPrefs();
         setUpImageFromSharedPrefs();
-        setObservable();
 
 
     }
@@ -96,7 +96,9 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     @Override
     public void setUpTitleFromSharedPrefs() {
-        getSupportActionBar().setTitle(mHeroesPresenter.getTitle());
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setTitle(mHeroesPresenter.getTitle());
+        }
     }
 
     @Override
@@ -128,13 +130,17 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     @Override
     public void setObservable() {
-        final LiveData<List<DatabaseHero>> heroList=mHeroesPresenter.getAllHeroes();
-        heroList.observe(this, new Observer<List<DatabaseHero>>() {
-            @Override
-            public void onChanged(@Nullable List<DatabaseHero> list) {
-                mHeroesAdapter.setHeroEntries(list);
-            }
-        });
+        if (mHeroesPresenter.getAllHeroes() !=null) {
+            final LiveData<List<DatabaseHero>> heroList=mHeroesPresenter.getAllHeroes();
+            Log.i(TAG,heroList.toString());
+            heroList.observe(this, new Observer<List<DatabaseHero>>() {
+                @Override
+                public void onChanged(@Nullable List<DatabaseHero> list) {
+                    mHeroesAdapter.setHeroEntries(list);
+                }
+            });
+        }
+
 
     }
 }

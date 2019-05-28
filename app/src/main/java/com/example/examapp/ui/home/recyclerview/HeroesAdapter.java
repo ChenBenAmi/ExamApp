@@ -11,7 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.examapp.R;
+import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
+import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.Hero;
 import com.example.examapp.ui.base.MvpView;
 
@@ -26,7 +28,6 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
     private HeroesPresenter mHeroPresenter;
     private final listItemClickListener mOnClickListener;
     private static List<DatabaseHero> mHeroEntries;
-    private Context mContext;
     private List<Hero> values;
 
 
@@ -34,16 +35,19 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         void onListItemClick(int position, String title);
     }
 
-    public HeroesAdapter(listItemClickListener mOnClickListener, Context context) {
+    public HeroesAdapter(listItemClickListener mOnClickListener, final Context context) {
         mHeroPresenter = new HeroesPresenter(context);
         this.mOnClickListener = mOnClickListener;
-        this.mContext = context;
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                mHeroEntries = DbHelper.getInstance(context).taskDao().getAll();
+
+            }
+        });
 
     }
 
-    public static List<DatabaseHero> getHeroList() {
-        return mHeroEntries;
-    }
 
     @NonNull
     @Override
@@ -52,8 +56,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         int layoutIdForListItem = R.layout.single_view_item_recycler;
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
-        HeroViewHolder heroViewHolder = new HeroViewHolder(view);
-        return heroViewHolder;
+        return new HeroViewHolder(view);
 
     }
 
@@ -73,12 +76,13 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         return mHeroPresenter.getViewCount();
     }
 
-    public void getList(List<Hero> repos) {
+    void getList(List<Hero> repos) {
         values = repos;
         Log.i(TAG, values.toString());
     }
 
     public class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, MvpView {
+
         @BindView(R.id.hero_name)
         TextView mHeroName;
 
@@ -91,14 +95,16 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         @BindView(R.id.favorite_icon_image_view)
         ImageView mFavoriteView;
 
-        public HeroViewHolder(@NonNull View itemView) {
+        private HeroViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
             mHeroImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mHeroPresenter.imageToFull(mHeroEntries.get(getAdapterPosition()).getImageUrl(),mHeroName.getText().toString());
+                    mHeroPresenter.imageToFull
+                            (mHeroEntries.get(getAdapterPosition())
+                                    .getImageUrl(), mHeroName.getText().toString());
                 }
             });
 
@@ -108,8 +114,8 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            String title=mHeroName.getText().toString();
-            mOnClickListener.onListItemClick(position,title);
+            String title = mHeroName.getText().toString();
+            mOnClickListener.onListItemClick(position, title);
         }
 
 
