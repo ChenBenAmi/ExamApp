@@ -6,7 +6,7 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 
-@Database(entities = {DatabaseHero.class},version = 3,exportSchema = false)
+@Database(entities = {DatabaseHero.class},version = 4,exportSchema = false)
 public abstract class DbHelper extends RoomDatabase {
 
     private static final Object Lock = new Object();

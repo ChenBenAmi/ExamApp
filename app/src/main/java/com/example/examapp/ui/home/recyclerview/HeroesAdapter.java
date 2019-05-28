@@ -15,6 +15,8 @@ import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.network.Hero;
 import com.github.chrisbanes.photoview.PhotoView;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 import butterknife.BindView;
@@ -31,7 +33,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
 
 
     public interface listItemClickListener {
-        void onListItemClick(int position);
+        void onListItemClick(int position, String title);
     }
 
     public HeroesAdapter(listItemClickListener mOnClickListener, Context context) {
@@ -59,13 +61,15 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
 
     @Override
     public void onBindViewHolder(@NonNull HeroViewHolder heroViewHolder, int i) {
-        mHeroPresenter.onBind(heroViewHolder, i,mHeroEntries,values);
+        mHeroPresenter.onBind(heroViewHolder, i, mHeroEntries, values);
 
     }
+
     public void setHeroEntries(List<DatabaseHero> taskEntries) {
         mHeroEntries = taskEntries;
         notifyDataSetChanged();
     }
+
     @Override
     public int getItemCount() {
         return mHeroPresenter.getViewCount();
@@ -96,16 +100,18 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
             mHeroImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mHeroPresenter.imageToFull(mHeroEntries.get(getAdapterPosition()).getImageUrl());
+                    mHeroPresenter.imageToFull(mHeroEntries.get(getAdapterPosition()).getImageUrl(),mHeroName.getText().toString());
                 }
             });
 
 
         }
+
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
-            mOnClickListener.onListItemClick(position);
+            String title=mHeroName.getText().toString();
+            mOnClickListener.onListItemClick(position,title);
         }
 
 

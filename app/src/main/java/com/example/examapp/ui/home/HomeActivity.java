@@ -81,17 +81,18 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 //    }
 
     @Override
-    public void onListItemClick(final int position) {
+    public void onListItemClick(final int position, final String title) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
-            public void run() {
-                boolean favorite = true;
-                if (dbHelper.taskDao().favoriteState(position)) {
-                    favorite = false;
-                    Log.i(TAG, "the value is true");
-                }
+                public void run() {
+                    boolean favorite = true;
+                    Log.i(TAG,"the title is "+title);
+                    if (dbHelper.taskDao().favoriteState(title)) {
+                        favorite = false;
+                        Log.i(TAG, "the value is true");
+                    }
                 dbHelper.taskDao().listToFalse();
-                DatabaseHero databaseHero = dbHelper.taskDao().getHeroByPosition(position);
+                DatabaseHero databaseHero = dbHelper.taskDao().getHeroByName(title);
                 databaseHero.setFavorite(true);
                 dbHelper.taskDao().updateList(databaseHero);
 

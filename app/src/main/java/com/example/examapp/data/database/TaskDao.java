@@ -16,14 +16,17 @@ public interface TaskDao {
     @Insert
     void insert(DatabaseHero databaseHero);
 
-    @Query("UPDATE HeroList SET mFavorite = :favorite WHERE mListPosition = :listPosition")
-    int updateFavorite(int listPosition, boolean favorite);
+    @Query("UPDATE HeroList SET mFavorite = :favorite WHERE mTitle = :title")
+    int updateFavorite(String title, boolean favorite);
 
-    @Query("SELECT  mListPosition=:id FROM herolist WHERE mFavorite= 1")
-    boolean favoriteState(int id);
+    @Query("SELECT  mTitle=:title FROM herolist WHERE mFavorite= 1")
+    boolean favoriteState(String title);
 
     @Query("SELECT * FROM HeroList WHERE mFavorite=1")
     DatabaseHero getHeroByBoolean();
+
+    @Query("SELECT * FROM HeroList WHERE mTitle=:title")
+    DatabaseHero getHeroByName(String title);
 
     @Query("Delete FROM Herolist")
     void clearTable();
@@ -34,8 +37,6 @@ public interface TaskDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateList(DatabaseHero databaseHero);
 
-    @Query("SELECT * FROM HeroList WHERE mListPosition=:position")
-    DatabaseHero getHeroByPosition(int position);
 
     @Query("SELECT * FROM Herolist")
     LiveData<List<DatabaseHero>> loadAllHeroes();

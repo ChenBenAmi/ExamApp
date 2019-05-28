@@ -11,27 +11,24 @@ public class DatabaseHero {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String mTitle;
-    private int mListPosition;
     private String mAbilities;
     private String mImageUrl;
     private boolean mFavorite;
 
-    public DatabaseHero(int id, String mTitle, String mAbilities, String mImageUrl, boolean mFavorite, int mListPosition) {
+    public DatabaseHero(int id, String mTitle, String mAbilities, String mImageUrl, boolean mFavorite) {
         setId(id);
         setTitle(mTitle);
         setAbilities(mAbilities);
         setImageUrl(mImageUrl);
         setFavorite(mFavorite);
-        setListPosition(mListPosition);
     }
 
     @Ignore
-    public DatabaseHero(String mTitle, String mAbilities, String mImageUrl, boolean mFavorite, int mListPosition) {
+    public DatabaseHero(String mTitle, String mAbilities, String mImageUrl, boolean mFavorite) {
         setTitle(mTitle);
         setAbilities(mAbilities);
         setImageUrl(mImageUrl);
         setFavorite(mFavorite);
-        setListPosition(mListPosition);
     }
 
     public int getId() {
@@ -75,11 +72,5 @@ public class DatabaseHero {
         this.mFavorite = mFavorite;
     }
 
-    public int getListPosition() {
-        return mListPosition;
-    }
 
-    public void setListPosition(int mListPosition) {
-        this.mListPosition = mListPosition;
-    }
 }

@@ -6,11 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.GlideException;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.AppExecutors;
@@ -18,10 +15,8 @@ import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.Hero;
-import com.example.examapp.ui.ViewImage;
+import com.example.examapp.ui.image.ViewImage;
 import com.example.examapp.ui.base.BasePresenter;
-import com.example.examapp.ui.home.HomeActivity;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -36,6 +31,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> implements HeroesMvpPresenter<V> {
 
     private static final String TAG = "HeroesPresenter";
+    public static final String HERO_URL="HERO_URL";
+    public static final String HERO_NAME="HERO_NAME";
     DataManager mDataManager;
     private Context mContext;
     private DbHelper mDbHelper;
@@ -83,13 +80,12 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
                                 .load(jsonHero.getImage())
                                 .apply(RequestOptions.circleCropTransform())
                                 .apply(RequestOptions.overrideOf(250, 250))
-                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(heroViewHolder.mHeroImage);
                     }
                 });
 
                 heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
-                final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false, position);
+                final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false);
                 heroList.add(databaseHero);
                 Log.i(TAG, "THE SIZE IS " + heroList.size());
                 if (heroList.size() == 11) {
@@ -112,7 +108,6 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
                                     .load(databaseHero.getImageUrl())
                                     .apply(RequestOptions.circleCropTransform())
                                     .apply(RequestOptions.overrideOf(250, 250))
-                                    .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(heroViewHolder.mHeroImage);
                         }
                     });
@@ -188,9 +183,11 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
 
     }
 
-    public void imageToFull(String url){
+    public void imageToFull(String url,String heroName){
         Intent intent= new Intent(mContext,ViewImage.class);
-        intent.putExtra("image_url",url);
+        intent.putExtra(HERO_URL,url);
+        intent.putExtra(HERO_NAME,heroName);
+
         mContext.startActivity(intent);
     }
 
