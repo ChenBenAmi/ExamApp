@@ -1,6 +1,7 @@
 package com.example.examapp.ui.home.recyclerview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +18,7 @@ import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.Hero;
+import com.example.examapp.ui.ViewImage;
 import com.example.examapp.ui.base.BasePresenter;
 import com.example.examapp.ui.home.HomeActivity;
 import com.squareup.picasso.Picasso;
@@ -120,6 +122,7 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
                     }
 
 
+
                 }
             });
 
@@ -183,6 +186,12 @@ public class HeroesPresenter<V extends HeroesMvpView> extends BasePresenter<V> i
         mDbHelper.taskDao().clearTable();
         heroList.clear();
 
+    }
+
+    public void imageToFull(String url){
+        Intent intent= new Intent(mContext,ViewImage.class);
+        intent.putExtra("image_url",url);
+        mContext.startActivity(intent);
     }
 
 

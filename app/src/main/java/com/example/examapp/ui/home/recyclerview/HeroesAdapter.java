@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.examapp.R;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.network.Hero;
+import com.github.chrisbanes.photoview.PhotoView;
 
 import java.util.List;
 
@@ -92,6 +93,13 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
+            mHeroImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mHeroPresenter.imageToFull(mHeroEntries.get(getAdapterPosition()).getImageUrl());
+                }
+            });
+
 
         }
         @Override
