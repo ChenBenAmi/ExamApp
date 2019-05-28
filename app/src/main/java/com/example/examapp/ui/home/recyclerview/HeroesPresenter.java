@@ -1,7 +1,10 @@
 package com.example.examapp.ui.home.recyclerview;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,6 +19,7 @@ import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.Hero;
+import com.example.examapp.ui.home.HomeActivity;
 import com.example.examapp.ui.home.HomeMvpView;
 import com.example.examapp.ui.image.ViewImage;
 import com.example.examapp.ui.base.BasePresenter;
@@ -33,8 +37,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> implements HeroesMvpPresenter<V> {
 
     private static final String TAG = "HeroesPresenter";
-    public static final String HERO_URL="HERO_URL";
-    public static final String HERO_NAME="HERO_NAME";
+    public static final String HERO_URL = "HERO_URL";
+    public static final String HERO_NAME = "HERO_NAME";
     DataManager mDataManager;
     private Context mContext;
     private DbHelper mDbHelper;
@@ -118,7 +122,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
                     }
 
 
-
                 }
             });
 
@@ -194,7 +197,7 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     @Override
     public String getImage() {
         if (DataManager.getInstance(mContext).getAppImage() != null) {
-            String imageUrl=DataManager.getInstance(mContext).getAppImage();
+            String imageUrl = DataManager.getInstance(mContext).getAppImage();
             return imageUrl;
 
         }
@@ -204,7 +207,7 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     @Override
     public String getTitle() {
         if (DataManager.getInstance(mContext).getAppTitle() != null) {
-            String AppTitle=DataManager.getInstance(mContext).getAppTitle();
+            String AppTitle = DataManager.getInstance(mContext).getAppTitle();
             return AppTitle;
         }
         return null;
@@ -225,22 +228,32 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
                 databaseHero.setFavorite(true);
                 mDbHelper.taskDao().updateList(databaseHero);
                 getMvpView().setUpImageFromDb(databaseHero.getImageUrl());
-                        Log.i(TAG, "the title is " + databaseHero.getTitle());
-                        getMvpView().setUpTitleFromDb(title);
+                Log.i(TAG, "the title is " + databaseHero.getTitle());
+                getMvpView().setUpTitleFromDb(title);
 
 
-                        DataManager.getInstance(mContext).setAppImage(databaseHero.getImageUrl());
-                        DataManager.getInstance(mContext).setAppTitle(title);
+                DataManager.getInstance(mContext).setAppImage(databaseHero.getImageUrl());
+                DataManager.getInstance(mContext).setAppTitle(title);
 
 
             }
         });
     }
 
-    public void imageToFull(String url,String heroName){
-        Intent intent= new Intent(mContext,ViewImage.class);
-        intent.putExtra(HERO_URL,url);
-        intent.putExtra(HERO_NAME,heroName);
+    @Override
+    public LiveData<List<DatabaseHero>> getAllHeroes() {
+        final LiveData<List<DatabaseHero>> heroList = mDbHelper.taskDao().loadAllHeroes();
+        if (heroList !=null) {
+            return heroList;
+        }
+        return null;
+    }
+
+
+    public void imageToFull(String url, String heroName) {
+        Intent intent = new Intent(mContext, ViewImage.class);
+        intent.putExtra(HERO_URL, url);
+        intent.putExtra(HERO_NAME, heroName);
         mContext.startActivity(intent);
     }
 

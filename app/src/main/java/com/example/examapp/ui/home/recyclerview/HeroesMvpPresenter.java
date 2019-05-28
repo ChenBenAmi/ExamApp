@@ -1,6 +1,7 @@
 package com.example.examapp.ui.home.recyclerview;
 
 
+import android.arch.lifecycle.LiveData;
 import android.support.v7.widget.RecyclerView;
 
 import com.example.examapp.data.database.DatabaseHero;
@@ -31,4 +32,6 @@ public interface HeroesMvpPresenter<V extends HomeMvpView> extends MvpPresenter<
     String getTitle();
 
     void onItemClicked(int position,String title);
+
+    LiveData<List<DatabaseHero>> getAllHeroes();
 }

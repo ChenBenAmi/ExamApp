@@ -31,7 +31,6 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     private static final String TAG = "HomeActivity";
     private HeroesPresenter mHeroesPresenter;
     private HeroesAdapter mHeroesAdapter;
-private DbHelper dbHelper;
 
     @BindView(R.id.app_bar_layout)
     AppBarLayout mapp_bar_layout;
@@ -54,8 +53,6 @@ private DbHelper dbHelper;
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
 
-        dbHelper = DbHelper.getInstance(getApplicationContext());
-
         mHeroesPresenter = new HeroesPresenter(HomeActivity.this);
         mHeroesPresenter.onAttach(HomeActivity.this);
         mHeroesAdapter = new HeroesAdapter(this, this);
@@ -65,14 +62,8 @@ private DbHelper dbHelper;
 
         setUpTitleFromSharedPrefs();
         setUpImageFromSharedPrefs();
+        setObservable();
 
-        final LiveData<List<DatabaseHero>> heroList = dbHelper.taskDao().loadAllHeroes();
-        heroList.observe(this, new Observer<List<DatabaseHero>>() {
-            @Override
-            public void onChanged(@Nullable List<DatabaseHero> list) {
-                mHeroesAdapter.setHeroEntries(list);
-            }
-        });
 
     }
 
@@ -90,10 +81,10 @@ private DbHelper dbHelper;
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId()==R.id.delete) {
-                mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
-                mHeroesPresenter.deleteDb();
-                return true;
+        if (item.getItemId() == R.id.delete) {
+            mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
+            mHeroesPresenter.deleteDb();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -134,6 +125,18 @@ private DbHelper dbHelper;
                 mNestedScrollView.scrollTo(0, 0);
                 mapp_bar_layout.setExpanded(true);
                 getSupportActionBar().setTitle(title);
+            }
+        });
+
+    }
+
+    @Override
+    public void setObservable() {
+        final LiveData<List<DatabaseHero>> heroList=mHeroesPresenter.getAllHeroes();
+        heroList.observe(this, new Observer<List<DatabaseHero>>() {
+            @Override
+            public void onChanged(@Nullable List<DatabaseHero> list) {
+                mHeroesAdapter.setHeroEntries(list);
             }
         });
 
