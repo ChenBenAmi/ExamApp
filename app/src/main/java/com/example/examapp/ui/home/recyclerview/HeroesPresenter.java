@@ -15,7 +15,7 @@ import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
-import com.example.examapp.data.network.Hero;
+import com.example.examapp.data.network.JsonHero;
 import com.example.examapp.ui.home.HomeMvpView;
 import com.example.examapp.ui.image.ViewImage;
 import com.example.examapp.ui.base.BasePresenter;
@@ -35,103 +35,101 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     private static final String TAG = "HeroesPresenter";
     public static final String HERO_URL = "HERO_URL";
     public static final String HERO_NAME = "HERO_NAME";
+    private DataManager mDataManager;
     private Context mContext;
     private DbHelper mDbHelper;
-    private List<DatabaseHero> heroList = new ArrayList<>();
+    private List<DatabaseHero> mHeroList = new ArrayList<>();
 
 
     public HeroesPresenter(Context context) {
         super(context);
         this.mContext = context;
-        DataManager mDataManager = DataManager.getInstance(context);
+        mDataManager = DataManager.getInstance(context);
         mDbHelper = DbHelper.getInstance(mContext);
     }
 
 
     @Override
-    public void onBind(final HeroesAdapter.HeroViewHolder heroViewHolder, final int position, final List<DatabaseHero> databaseHeroes, final List<Hero> jsonHeroes) {
-     AppExecutors.getInstance().diskIO().execute(new Runnable() {
-         @Override
-         public void run() {
-             if (mDbHelper.taskDao().getHeroByName("Drax the Destroyer") == null) {
-                 Log.i(TAG, "FROM JSON");
-                 if (jsonHeroes != null) {
-                     final Hero jsonHero = jsonHeroes.get(position);
-                     String name = jsonHero.getTitle();
-                     heroViewHolder.mHeroName.setText(name);
-                     List<String> abilitiesList = jsonHero.getAbilities();
-                     StringBuilder builder = new StringBuilder();
-                     Iterator<String> iterator = abilitiesList.iterator();
-                     int count = 0;
-                     while (iterator.hasNext()) {
-                         String ability = iterator.next();
-                         builder.append(ability);
-                         builder.append(", ");
-                         count++;
-                         if (count == 2) {
-                             builder.append("\n");
-                         }
-                         if (!iterator.hasNext()) {
-                             builder.append(ability);
-                         }
-                     }
-                     heroViewHolder.mHeroAbilities.setText(builder.toString());
-                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                         @Override
-                         public void run() {
-                             Glide.with(mContext)
-                                     .load(jsonHero.getImage())
-                                     .apply(RequestOptions.circleCropTransform())
-                                     .apply(RequestOptions.overrideOf(250, 250))
-                                     .into(heroViewHolder.mHeroImage);
-                         }
-                     });
+    public void onBind(final HeroesAdapter.HeroViewHolder heroViewHolder, final int position, final List<DatabaseHero> databaseHeroes, final List<JsonHero> jsonJsonHeroes) {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (mDbHelper.taskDao().getHeroByName("Drax the Destroyer") == null) {
+                    Log.i(TAG, "FROM JSON");
+                    if (jsonJsonHeroes != null) {
+                        final JsonHero jsonHero = jsonJsonHeroes.get(position);
+                        String name = jsonHero.getTitle();
+//                     heroViewHolder.mHeroName.setText(name);
+                        List<String> abilitiesList = jsonHero.getAbilities();
+                        StringBuilder builder = new StringBuilder();
+                        Iterator<String> iterator = abilitiesList.iterator();
+                        int count = 0;
+                        while (iterator.hasNext()) {
+                            String ability = iterator.next();
+                            builder.append(ability);
+                            builder.append(", ");
+                            count++;
+                            if (count == 2) {
+                                builder.append("\n");
+                            }
+                            if (!iterator.hasNext()) {
+                                builder.append(ability);
+                            }
+                        }
+//                     heroViewHolder.mHeroAbilities.setText(builder.toString());
+//                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
+//                         @Override
+//                         public void run() {
+//                             Glide.with(mContext)
+//                                     .load(jsonHero.getImage())
+//                                     .apply(RequestOptions.circleCropTransform())
+//                                     .apply(RequestOptions.overrideOf(250, 250))
+//                                     .into(heroViewHolder.mHeroImage);
+//                         }
+//                     });
+//
+//                     heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
+                        final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false);
+                        mHeroList.add(databaseHero);
+                        Log.i(TAG, "THE SIZE IS " + mHeroList.size());
+                        if (mHeroList.size() == 11) {
+                            Log.i(TAG, "HELLO");
+                            insertToDb();
+                        }
+                    }
+                } else {
+                    AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (databaseHeroes.size() > 0) {
+                                final DatabaseHero databaseHero = databaseHeroes.get(position);
+                                heroViewHolder.mHeroName.setText(databaseHero.getTitle());
+                                heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
+                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Glide.with(mContext)
+                                                .load(databaseHero.getImageUrl())
+                                                .apply(RequestOptions.circleCropTransform())
+                                                .apply(RequestOptions.overrideOf(250, 250))
+                                                .into(heroViewHolder.mHeroImage);
+                                    }
+                                });
 
-                     heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
-                     final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false);
-                     heroList.add(databaseHero);
-                     Log.i(TAG, "THE SIZE IS " + heroList.size());
-                     if (heroList.size() == 11) {
-                         Log.i(TAG, "HELLO");
-                         insertToDb();
-                     }
-                 }
-             } else {
-                 Log.i(TAG, "From DB");
-                 Log.i(TAG,"THE POSITION IS"+position);
-                 AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                     @Override
-                     public void run() {
-                         if (databaseHeroes.size()>0) {
-
-
-                         final DatabaseHero databaseHero = databaseHeroes.get(position);
-                         heroViewHolder.mHeroName.setText(databaseHero.getTitle());
-                         heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
-                         AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                             @Override
-                             public void run() {
-                                 Glide.with(mContext)
-                                         .load(databaseHero.getImageUrl())
-                                         .apply(RequestOptions.circleCropTransform())
-                                         .apply(RequestOptions.overrideOf(250, 250))
-                                         .into(heroViewHolder.mHeroImage);
-                             }
-                         });
-
-                         if (!databaseHero.getFavorite()) {
-                             heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
-                         } else {
-                             heroViewHolder.mFavoriteView.setVisibility(View.VISIBLE);
-                         }
+                                if (!databaseHero.getFavorite()) {
+                                    heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
+                                } else {
+                                    heroViewHolder.mFavoriteView.setVisibility(View.VISIBLE);
+                                }
 
 
-                     }}
-                 });
+                            }
+                        }
+                    });
 
-             }
-         }
-     });
+                }
+            }
+        });
 
     }
 
@@ -152,38 +150,41 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
     @Override
     public void buildRetroFit(final RecyclerView recyclerView, final HeroesAdapter heroesAdapter) {
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("https://heroapps.co.il/employee-tests/android/")
-                .addConverterFactory(GsonConverterFactory.create());
-        Retrofit retrofit = builder.build();
-        ApiInterface client = retrofit.create(ApiInterface.class);
-        Call<List<Hero>> call = client.getHeroes();
+            Log.i(TAG, "nothing in db getting json");
+            Retrofit.Builder builder = new Retrofit.Builder()
+                    .baseUrl("https://heroapps.co.il/employee-tests/android/")
+                    .addConverterFactory(GsonConverterFactory.create());
+            Retrofit retrofit = builder.build();
+            ApiInterface client = retrofit.create(ApiInterface.class);
+            Call<List<JsonHero>> call = client.getHeroes();
 
-        call.enqueue(new Callback<List<Hero>>() {
-            @Override
-            public void onResponse(Call<List<Hero>> call, Response<List<Hero>> response) {
-                List<Hero> repos = response.body();
-                recyclerView.setAdapter(heroesAdapter);
-                heroesAdapter.getList(repos);
-                heroesAdapter.notifyDataSetChanged();
-            }
+            call.enqueue(new Callback<List<JsonHero>>() {
+                @Override
+                public void onResponse(Call<List<JsonHero>> call, Response<List<JsonHero>> response) {
+                    List<JsonHero> repos = response.body();
+                    recyclerView.setAdapter(heroesAdapter);
+                    heroesAdapter.getList(repos);
+                    heroesAdapter.notifyDataSetChanged();
+                }
 
-            @Override
-            public void onFailure(Call<List<Hero>> call, Throwable t) {
-                Log.i(TAG, "something is wrong");
-            }
-        });
-    }
+                @Override
+                public void onFailure(Call<List<JsonHero>> call, Throwable t) {
+                    Log.i(TAG, "something is wrong");
+                }
+            });
+        }
+
+
 
     @Override
     public void insertToDb() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < heroList.size(); i++) {
+                for (int i = 0; i < mHeroList.size(); i++) {
 
-                    mDbHelper.taskDao().insert(heroList.get(i));
-                    Log.i(TAG, "THIS IS HERO NR " + i +heroList.get(i));
+                    mDbHelper.taskDao().insert(mHeroList.get(i));
+                    Log.i(TAG, "THIS IS HERO NR " + i + mHeroList.get(i));
                 }
             }
         });
@@ -193,15 +194,15 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
     @Override
     public void deleteDb() {
-        heroList.clear();
-        Log.i(TAG, "SHOULD BE CLEARED");
+        mDataManager.clearSharedPref();
+
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 mDbHelper.taskDao().clearTable();
+                buildRetroFit(getMvpView().getRecyclerView(),getMvpView().getHeroesAdapter());
             }
         });
-        heroList.clear();
 
     }
 
@@ -209,7 +210,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     public String getImage() {
         if (DataManager.getInstance(mContext).getAppImage() != null) {
             return DataManager.getInstance(mContext).getAppImage();
-
         }
         return null;
     }

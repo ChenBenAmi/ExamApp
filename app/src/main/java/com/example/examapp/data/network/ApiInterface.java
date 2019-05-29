@@ -9,5 +9,5 @@ public interface ApiInterface {
 
 
     @GET("androidexam.json")
-    Call<List<Hero>> getHeroes();
+    Call<List<JsonHero>> getHeroes();
 }

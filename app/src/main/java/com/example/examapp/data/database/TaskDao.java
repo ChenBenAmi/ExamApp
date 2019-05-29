@@ -31,7 +31,6 @@ public interface TaskDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateList(DatabaseHero databaseHero);
 
-
     @Query("SELECT * FROM Herolist")
     LiveData<List<DatabaseHero>> loadAllHeroes();
 

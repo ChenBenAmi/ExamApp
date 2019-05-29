@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Hero {
+public class JsonHero {
 
     @SerializedName("title")
     @Expose
@@ -43,7 +43,7 @@ public class Hero {
 
     @Override
     public String toString() {
-        return "Hero{" +
+        return "JsonHero{" +
                 "title='" + title + '\'' +
                 ", abilities=" + abilities +
                 ", image='" + image + '\'' +

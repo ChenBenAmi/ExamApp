@@ -9,16 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.examapp.R;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
-import com.example.examapp.data.network.Hero;
+import com.example.examapp.data.network.JsonHero;
 import com.example.examapp.ui.base.MvpView;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -28,7 +25,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
     private HeroesPresenter mHeroPresenter;
     private final listItemClickListener mOnClickListener;
     private static List<DatabaseHero> mHeroEntries;
-    private List<Hero> values;
+    private List<JsonHero> values;
 
 
     public interface listItemClickListener {
@@ -76,7 +73,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         return mHeroPresenter.getViewCount();
     }
 
-    void getList(List<Hero> repos) {
+    void getList(List<JsonHero> repos) {
         values = repos;
         Log.i(TAG, values.toString());
     }

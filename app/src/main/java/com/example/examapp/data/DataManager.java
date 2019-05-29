@@ -50,6 +50,10 @@ public class DataManager {
         mSharedPreferencesHelper.setAppImage(appImage);
     }
 
+    public void clearSharedPref(){
+        mSharedPreferencesHelper.clear();
+    }
+
 
 
 }
