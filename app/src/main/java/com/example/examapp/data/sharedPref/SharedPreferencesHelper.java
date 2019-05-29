@@ -33,8 +33,6 @@ public class SharedPreferencesHelper {
         mSharedPreferences.edit().putString(APP_IMAGE,appImage).apply();
     }
 
-
-
     public void clear() {
         mSharedPreferences.edit().clear().apply();
     }

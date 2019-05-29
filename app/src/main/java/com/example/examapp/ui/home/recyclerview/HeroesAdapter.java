@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.examapp.R;
+import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
@@ -31,6 +32,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
     private List<JsonHero> mJsonHeroes;
 
 
+
     public interface listItemClickListener {
         void onListItemClick(int position, String title);
     }
@@ -41,7 +43,9 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mHeroEntries = DbHelper.getInstance(context).taskDao().getAll();
+
+                mHeroEntries =DataManager.getInstance(context).getAllHeroes();
+
 
             }
         });

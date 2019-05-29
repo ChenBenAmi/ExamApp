@@ -72,5 +72,4 @@ public class DatabaseHero {
         this.mFavorite = mFavorite;
     }
 
-
 }

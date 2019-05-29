@@ -22,20 +22,20 @@ public interface TaskDao {
     @Query("SELECT * FROM HeroList WHERE mTitle=:title")
     DatabaseHero getHeroByName(String title);
 
-    @Query("Delete FROM Herolist")
-    void clearTable();
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void updateList(DatabaseHero databaseHero);
 
     @Query("UPDATE HeroList SET mFavorite=0")
     void listToFalse();
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateList(DatabaseHero databaseHero);
+    @Query("SELECT * FROM herolist")
+    List<DatabaseHero> getAll();
 
     @Query("SELECT * FROM Herolist")
     LiveData<List<DatabaseHero>> loadAllHeroes();
 
-    @Query("SELECT * FROM herolist")
-    List<DatabaseHero> getAll();
+    @Query("Delete FROM Herolist")
+    void clearTable();
 
 
 

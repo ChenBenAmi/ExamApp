@@ -9,7 +9,6 @@ import java.util.concurrent.Executors;
 
 public class AppExecutors {
 
-    // For Singleton instantiation
     private static final Object LOCK = new Object();
     private static AppExecutors Instance;
     private final Executor mDiskIO;
@@ -39,10 +38,6 @@ public class AppExecutors {
 
     public Executor mainThread() {
         return mainThread;
-    }
-
-    public Executor networkIO() {
-        return networkIO;
     }
 
 

@@ -39,7 +39,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     public static final String HERO_NAME = "HERO_NAME";
     private DataManager mDataManager;
     private Context mContext;
-    private DbHelper mDbHelper;
     private List<DatabaseHero> mHeroList = new ArrayList<>();
 
 
@@ -47,7 +46,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
         super(context);
         this.mContext = context;
         mDataManager = DataManager.getInstance(context);
-        mDbHelper = DbHelper.getInstance(mContext);
     }
 
 
@@ -133,7 +131,8 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                DatabaseHero flagHero = mDbHelper.taskDao().getHeroByName("Drax the Destroyer");
+                String lastHero="Drax the Destroyer";
+                DatabaseHero flagHero = mDataManager.getHeroByName(lastHero);
                 if (flagHero == null) {
                     if (jsonHeroes != null) {
                         final JsonHero jsonHero = jsonHeroes.get(position);
@@ -159,7 +158,7 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
                         if (mHeroList.size() == 11) {
                             for (int i = 0; i < mHeroList.size(); i++) {
 
-                                mDbHelper.taskDao().insert(mHeroList.get(i));
+                                mDataManager.insertHero(mHeroList.get(i));
 
                             }
                         }
@@ -178,7 +177,7 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                mDbHelper.taskDao().clearTable();
+                mDataManager.clearTable();
                 buildRetroFit(getMvpView().getRecyclerView(), getMvpView().getHeroesAdapter());
             }
         });
@@ -206,13 +205,13 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                if (mDbHelper.taskDao().favoriteState(title)) {
+                if (mDataManager.checkFavoriteState(title)) {
                     Log.i(TAG, "the value is true");
                 }
-                mDbHelper.taskDao().listToFalse();
-                final DatabaseHero databaseHero = mDbHelper.taskDao().getHeroByName(title);
+                mDataManager.listToFalse();
+                final DatabaseHero databaseHero = mDataManager.getHeroByName(title);
                 databaseHero.setFavorite(true);
-                mDbHelper.taskDao().updateList(databaseHero);
+                mDataManager.updateHero(databaseHero);
                 getMvpView().setUpImageFromDb(databaseHero.getImageUrl());
                 Log.i(TAG, "the title is " + databaseHero.getTitle());
                 getMvpView().setUpTitleFromDb(title);
@@ -225,7 +224,7 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
     @Override
     public LiveData<List<DatabaseHero>> getAllHeroes() {
-        final LiveData<List<DatabaseHero>> heroList = mDbHelper.taskDao().loadAllHeroes();
+        final LiveData<List<DatabaseHero>> heroList = mDataManager.loadAllHeroes();
         if (heroList != null) {
             return heroList;
         }
