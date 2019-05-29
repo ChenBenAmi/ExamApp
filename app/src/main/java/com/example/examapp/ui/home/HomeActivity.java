@@ -1,4 +1,5 @@
 package com.example.examapp.ui.home;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.os.Bundle;
@@ -12,14 +13,16 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examapp.R;
-import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.ui.home.recyclerview.HeroesAdapter;
 import com.example.examapp.ui.home.recyclerview.HeroesPresenter;
+
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -55,9 +58,8 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         mHeroesAdapter = new HeroesAdapter(this, this);
 
         mHeroesPresenter.setRecyclerView(mRecyclerView, mHeroesAdapter);
-        setObservable();
-
         mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
+        setObservable();
 
         setUpTitleFromSharedPrefs();
         setUpImageFromSharedPrefs();
@@ -88,18 +90,46 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     }
 
 
+
+
+    @Override
+    public void setObservable() {
+        if (mHeroesPresenter.getAllHeroes() !=null) {
+            final LiveData<List<DatabaseHero>> heroList=mHeroesPresenter.getAllHeroes();
+            Log.i(TAG,heroList.toString());
+            heroList.observe(this, new Observer<List<DatabaseHero>>() {
+                @Override
+                public void onChanged(@Nullable List<DatabaseHero> list) {
+                    mHeroesAdapter.setHeroEntries(list);
+                }
+            });
+        }
+
+
+    }
+
+    @Override
+    public RecyclerView getRecyclerView() {
+        return mRecyclerView;
+    }
+
+    @Override
+    public HeroesAdapter getHeroesAdapter() {
+        return mHeroesAdapter;
+    }
+
     @Override
     public void setUpImageFromSharedPrefs() {
-            Glide.with(getApplicationContext())
-                    .load(mHeroesPresenter.getImage())
-                    .transition(DrawableTransitionOptions.withCrossFade())
-                    .into(mTitleImageView);
+        Glide.with(getApplicationContext())
+                .load(mHeroesPresenter.getImage())
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(mTitleImageView);
 
     }
 
     @Override
     public void setUpTitleFromSharedPrefs() {
-        if(getSupportActionBar() != null){
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(mHeroesPresenter.getTitle());
         }
     }
@@ -129,31 +159,5 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
             }
         });
 
-    }
-
-    @Override
-    public void setObservable() {
-        if (mHeroesPresenter.getAllHeroes() !=null) {
-            final LiveData<List<DatabaseHero>> heroList=mHeroesPresenter.getAllHeroes();
-            Log.i(TAG,heroList.toString());
-            heroList.observe(this, new Observer<List<DatabaseHero>>() {
-                @Override
-                public void onChanged(@Nullable List<DatabaseHero> list) {
-                    mHeroesAdapter.setHeroEntries(list);
-                }
-            });
-        }
-
-
-    }
-
-    @Override
-    public RecyclerView getRecyclerView() {
-        return mRecyclerView;
-    }
-
-    @Override
-    public HeroesAdapter getHeroesAdapter() {
-        return mHeroesAdapter;
     }
 }

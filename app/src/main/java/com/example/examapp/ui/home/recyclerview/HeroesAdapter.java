@@ -9,13 +9,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.example.examapp.R;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.JsonHero;
 import com.example.examapp.ui.base.MvpView;
+
 import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -25,7 +28,7 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
     private HeroesPresenter mHeroPresenter;
     private final listItemClickListener mOnClickListener;
     private static List<DatabaseHero> mHeroEntries;
-    private List<JsonHero> values;
+    private List<JsonHero> mJsonHeroes;
 
 
     public interface listItemClickListener {
@@ -59,7 +62,8 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
 
     @Override
     public void onBindViewHolder(@NonNull HeroViewHolder heroViewHolder, int i) {
-        mHeroPresenter.onBind(heroViewHolder, i, mHeroEntries, values);
+        mHeroPresenter.insertToDb(mJsonHeroes, i);
+        mHeroPresenter.onBind(heroViewHolder, i, mHeroEntries);
 
     }
 
@@ -73,9 +77,9 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
         return mHeroPresenter.getViewCount();
     }
 
-    void getList(List<JsonHero> repos) {
-        values = repos;
-        Log.i(TAG, values.toString());
+    void putList(List<JsonHero> repos) {
+        mJsonHeroes = repos;
+        Log.i(TAG, mJsonHeroes.toString());
     }
 
     public class HeroViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, MvpView {

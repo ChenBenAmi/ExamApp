@@ -3,6 +3,7 @@ package com.example.examapp.ui.home.recyclerview;
 import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,9 +17,10 @@ import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.JsonHero;
-import com.example.examapp.ui.home.HomeMvpView;
-import com.example.examapp.ui.image.ViewImage;
 import com.example.examapp.ui.base.BasePresenter;
+import com.example.examapp.ui.home.HomeMvpView;
+import com.example.examapp.ui.home.recyclerview.HeroesAdapter.HeroViewHolder;
+import com.example.examapp.ui.image.ViewImage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -50,82 +52,33 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
 
     @Override
-    public void onBind(final HeroesAdapter.HeroViewHolder heroViewHolder, final int position, final List<DatabaseHero> databaseHeroes, final List<JsonHero> jsonJsonHeroes) {
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+    public void onBind(final HeroViewHolder heroViewHolder, final int position, final List<DatabaseHero> databaseHeroes) {
+        Log.i(TAG, "ON BIND TRIGGERED nr " + position);
+        AppExecutors.getInstance().mainThread().execute(new Runnable() {
             @Override
             public void run() {
-                if (mDbHelper.taskDao().getHeroByName("Drax the Destroyer") == null) {
-                    Log.i(TAG, "FROM JSON");
-                    if (jsonJsonHeroes != null) {
-                        final JsonHero jsonHero = jsonJsonHeroes.get(position);
-                        String name = jsonHero.getTitle();
-//                     heroViewHolder.mHeroName.setText(name);
-                        List<String> abilitiesList = jsonHero.getAbilities();
-                        StringBuilder builder = new StringBuilder();
-                        Iterator<String> iterator = abilitiesList.iterator();
-                        int count = 0;
-                        while (iterator.hasNext()) {
-                            String ability = iterator.next();
-                            builder.append(ability);
-                            builder.append(", ");
-                            count++;
-                            if (count == 2) {
-                                builder.append("\n");
-                            }
-                            if (!iterator.hasNext()) {
-                                builder.append(ability);
-                            }
-                        }
-//                     heroViewHolder.mHeroAbilities.setText(builder.toString());
-//                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
-//                         @Override
-//                         public void run() {
-//                             Glide.with(mContext)
-//                                     .load(jsonHero.getImage())
-//                                     .apply(RequestOptions.circleCropTransform())
-//                                     .apply(RequestOptions.overrideOf(250, 250))
-//                                     .into(heroViewHolder.mHeroImage);
-//                         }
-//                     });
-//
-//                     heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
-                        final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false);
-                        mHeroList.add(databaseHero);
-                        Log.i(TAG, "THE SIZE IS " + mHeroList.size());
-                        if (mHeroList.size() == 11) {
-                            Log.i(TAG, "HELLO");
-                            insertToDb();
-                        }
-                    }
-                } else {
+                if (databaseHeroes.size() > 0) {
+                    final DatabaseHero databaseHero = databaseHeroes.get(position);
+                    Log.i(TAG, "this is hero " + databaseHero.toString());
+                    heroViewHolder.mHeroName.setText(databaseHero.getTitle());
+                    heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (databaseHeroes.size() > 0) {
-                                final DatabaseHero databaseHero = databaseHeroes.get(position);
-                                heroViewHolder.mHeroName.setText(databaseHero.getTitle());
-                                heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
-                                AppExecutors.getInstance().mainThread().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        Glide.with(mContext)
-                                                .load(databaseHero.getImageUrl())
-                                                .apply(RequestOptions.circleCropTransform())
-                                                .apply(RequestOptions.overrideOf(250, 250))
-                                                .into(heroViewHolder.mHeroImage);
-                                    }
-                                });
-
-                                if (!databaseHero.getFavorite()) {
-                                    heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
-                                } else {
-                                    heroViewHolder.mFavoriteView.setVisibility(View.VISIBLE);
-                                }
-
-
-                            }
+                            Glide.with(mContext)
+                                    .load(databaseHero.getImageUrl())
+                                    .apply(RequestOptions.circleCropTransform())
+                                    .apply(RequestOptions.overrideOf(250, 250))
+                                    .into(heroViewHolder.mHeroImage);
                         }
                     });
+
+                    if (!databaseHero.getFavorite()) {
+                        heroViewHolder.mFavoriteView.setVisibility(View.INVISIBLE);
+                    } else {
+                        heroViewHolder.mFavoriteView.setVisibility(View.VISIBLE);
+                    }
+
 
                 }
             }
@@ -150,57 +103,83 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
     @Override
     public void buildRetroFit(final RecyclerView recyclerView, final HeroesAdapter heroesAdapter) {
-            Log.i(TAG, "nothing in db getting json");
-            Retrofit.Builder builder = new Retrofit.Builder()
-                    .baseUrl("https://heroapps.co.il/employee-tests/android/")
-                    .addConverterFactory(GsonConverterFactory.create());
-            Retrofit retrofit = builder.build();
-            ApiInterface client = retrofit.create(ApiInterface.class);
-            Call<List<JsonHero>> call = client.getHeroes();
+        Log.i(TAG, "nothing in db getting json");
+        Retrofit.Builder builder = new Retrofit.Builder()
+                .baseUrl("https://heroapps.co.il/employee-tests/android/")
+                .addConverterFactory(GsonConverterFactory.create());
+        Retrofit retrofit = builder.build();
+        ApiInterface client = retrofit.create(ApiInterface.class);
+        Call<List<JsonHero>> call = client.getHeroes();
 
-            call.enqueue(new Callback<List<JsonHero>>() {
-                @Override
-                public void onResponse(Call<List<JsonHero>> call, Response<List<JsonHero>> response) {
-                    List<JsonHero> repos = response.body();
-                    recyclerView.setAdapter(heroesAdapter);
-                    heroesAdapter.getList(repos);
-                    heroesAdapter.notifyDataSetChanged();
-                }
+        call.enqueue(new Callback<List<JsonHero>>() {
+            @Override
+            public void onResponse(@NonNull Call<List<JsonHero>> call, @NonNull Response<List<JsonHero>> response) {
+                List<JsonHero> repos = response.body();
+                recyclerView.setAdapter(heroesAdapter);
+                heroesAdapter.putList(repos);
+                heroesAdapter.notifyDataSetChanged();
+            }
 
-                @Override
-                public void onFailure(Call<List<JsonHero>> call, Throwable t) {
-                    Log.i(TAG, "something is wrong");
-                }
-            });
-        }
-
+            @Override
+            public void onFailure(@NonNull Call<List<JsonHero>> call, @NonNull Throwable t) {
+                Log.i(TAG, "something is wrong");
+            }
+        });
+    }
 
 
     @Override
-    public void insertToDb() {
+    public void insertToDb(final List<JsonHero> jsonHeroes, final int position) {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < mHeroList.size(); i++) {
+                DatabaseHero flagHero = mDbHelper.taskDao().getHeroByName("Drax the Destroyer");
+                if (flagHero == null) {
+                    if (jsonHeroes != null) {
+                        final JsonHero jsonHero = jsonHeroes.get(position);
+                        String name = jsonHero.getTitle();
+                        List<String> abilitiesList = jsonHero.getAbilities();
+                        StringBuilder builder = new StringBuilder();
+                        Iterator<String> iterator = abilitiesList.iterator();
+                        int count = 0;
+                        while (iterator.hasNext()) {
+                            String ability = iterator.next();
+                            builder.append(ability);
+                            builder.append(", ");
+                            count++;
+                            if (count == 2) {
+                                builder.append("\n");
+                            }
+                            if (!iterator.hasNext()) {
+                                builder.append(ability);
+                            }
+                        }
+                        final DatabaseHero databaseHero = new DatabaseHero(name, builder.toString(), jsonHero.getImage(), false);
+                        mHeroList.add(databaseHero);
+                        if (mHeroList.size() == 11) {
+                            for (int i = 0; i < mHeroList.size(); i++) {
 
-                    mDbHelper.taskDao().insert(mHeroList.get(i));
-                    Log.i(TAG, "THIS IS HERO NR " + i + mHeroList.get(i));
+                                mDbHelper.taskDao().insert(mHeroList.get(i));
+
+                            }
+                        }
+
+                    }
+
                 }
             }
         });
-
-
     }
+
 
     @Override
     public void deleteDb() {
         mDataManager.clearSharedPref();
-
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                 mDbHelper.taskDao().clearTable();
-                buildRetroFit(getMvpView().getRecyclerView(),getMvpView().getHeroesAdapter());
+                buildRetroFit(getMvpView().getRecyclerView(), getMvpView().getHeroesAdapter());
             }
         });
 
@@ -240,7 +219,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
                 DataManager.getInstance(mContext).setAppImage(databaseHero.getImageUrl());
                 DataManager.getInstance(mContext).setAppTitle(title);
 
-
             }
         });
     }
@@ -253,7 +231,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
         }
         return null;
     }
-
 
     void imageToFull(String url, String heroName) {
         Intent intent = new Intent(mContext, ViewImage.class);
