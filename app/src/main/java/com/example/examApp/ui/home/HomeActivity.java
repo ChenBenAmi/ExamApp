@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -58,8 +59,10 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         mHeroesPresenter = new HeroesPresenter<>(HomeActivity.this);
         mHeroesPresenter.onAttach(HomeActivity.this);
         mHeroesAdapter = new HeroesAdapter(this, this);
-
-        mHeroesPresenter.setRecyclerView(mRecyclerView, mHeroesAdapter);
+        mRecyclerView.setHasFixedSize(true);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mHeroesAdapter);
         mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
         setObservable();
 
@@ -77,9 +80,9 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     @Override
     public void setObservable() {
-        if (mHeroesPresenter.getAllHeroes() !=null) {
-            final LiveData<List<DatabaseHero>> heroList=mHeroesPresenter.getAllHeroes();
-            Log.i(TAG,heroList.toString());
+        if (mHeroesPresenter.getAllHeroes() != null) {
+            final LiveData<List<DatabaseHero>> heroList = mHeroesPresenter.getAllHeroes();
+            Log.i(TAG, heroList.toString());
             heroList.observe(this, new Observer<List<DatabaseHero>>() {
                 @Override
                 public void onChanged(@Nullable List<DatabaseHero> list) {
@@ -135,3 +138,5 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     }
 }
+
+

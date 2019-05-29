@@ -18,8 +18,6 @@ interface HeroesMvpPresenter<V extends HomeMvpView> extends MvpPresenter<V> {
 
     void onBind(HeroViewHolder songViewHolder, int position, List<DatabaseHero> databaseHeroes);
 
-    void setRecyclerView(RecyclerView recyclerView, HeroesAdapter heroesAdapter);
-
     void buildRetroFit(RecyclerView recyclerView, HeroesAdapter heroesAdapter);
 
     void insertToDb(List<JsonHero> jsonHeroes, int position);

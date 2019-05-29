@@ -82,14 +82,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     }
 
 
-    @Override
-    public void setRecyclerView(RecyclerView recyclerView, HeroesAdapter heroesAdapter) {
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(mContext);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(heroesAdapter);
-
-    }
 
     @Override
     public void buildRetroFit(final RecyclerView recyclerView, final HeroesAdapter heroesAdapter) {
