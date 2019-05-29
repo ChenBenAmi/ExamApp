@@ -11,7 +11,12 @@ import com.example.examApp.data.sharedPref.SharedPreferencesHelper;
 import java.util.List;
 
 import retrofit2.Retrofit;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *DataManger singleton design pattern the application model
+ * communicate with the database shared preferences and the api
+ */
 public class DataManager {
 
     private static DataManager instance;

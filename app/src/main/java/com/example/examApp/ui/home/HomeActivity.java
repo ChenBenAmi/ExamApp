@@ -23,6 +23,11 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *Home activity the main view component
+ */
 public class HomeActivity extends AppCompatActivity implements HomeMvpView, HeroesAdapter.listItemClickListener {
 
     private static final String TAG = "HomeActivity";
@@ -63,6 +68,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
 
     }
+
 
     @Override
     public void onListItemClick(final int position, final String title) {

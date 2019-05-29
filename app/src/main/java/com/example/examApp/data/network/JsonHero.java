@@ -3,7 +3,11 @@ package com.example.examApp.data.network;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import java.util.List;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *jsonHero POJO
+ */
 public class JsonHero {
 
   @SerializedName("title")

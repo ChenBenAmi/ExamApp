@@ -4,7 +4,11 @@ package com.example.examApp.data.database;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *DatabaseHero the object stored in memory
+ */
 @Entity(tableName = "HeroList")
 public class DatabaseHero {
 

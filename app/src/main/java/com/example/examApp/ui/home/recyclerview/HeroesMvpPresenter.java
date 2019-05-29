@@ -9,7 +9,11 @@ import com.example.examApp.ui.base.MvpPresenter;
 import com.example.examApp.ui.home.HomeMvpView;
 import com.example.examApp.ui.home.recyclerview.HeroesAdapter.HeroViewHolder;
 import java.util.List;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *Heroes Presenter interface with all its methods
+ */
 interface HeroesMvpPresenter<V extends HomeMvpView> extends MvpPresenter<V> {
 
     void onBind(HeroViewHolder songViewHolder, int position, List<DatabaseHero> databaseHeroes);

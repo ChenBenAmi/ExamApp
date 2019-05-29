@@ -5,7 +5,11 @@ import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *Database singleton to store the json objects in memory using room library
+ */
 @Database(entities = {DatabaseHero.class},version = 4,exportSchema = false)
 public abstract class DbHelper extends RoomDatabase {
 

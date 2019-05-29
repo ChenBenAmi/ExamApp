@@ -5,7 +5,11 @@ import android.os.Looper;
 import android.support.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *App threads
+ */
 public class AppExecutors {
 
     private static final Object LOCK = new Object();
@@ -15,7 +19,6 @@ public class AppExecutors {
 
     private AppExecutors(Executor diskIO, Executor networkIO, Executor mainThread) {
         this.mDiskIO = diskIO;
-        Executor networkIO1 = networkIO;
         this.mainThread = mainThread;
     }
 

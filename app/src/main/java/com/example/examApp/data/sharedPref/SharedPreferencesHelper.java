@@ -2,14 +2,16 @@ package com.example.examApp.data.sharedPref;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *Shared preferences to store image url and title of the favorite hero
+ */
 public class SharedPreferencesHelper {
-
 
     private static final String MY_PREFS = "MY_PREFS";
     private static final String APP_TITLE = "APP_TITLE";
     private static final String APP_IMAGE="APP_IMAGE";
-
     private SharedPreferences mSharedPreferences;
 
     public SharedPreferencesHelper(Context context) {

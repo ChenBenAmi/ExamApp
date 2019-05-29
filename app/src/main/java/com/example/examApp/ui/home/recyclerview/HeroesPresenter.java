@@ -26,7 +26,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *Heroes Presenter to handle the application logic
+ */
 public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> implements HeroesMvpPresenter<V> {
 
     private static final String TAG = "HeroesPresenter";

@@ -18,7 +18,11 @@ import com.example.examApp.ui.base.MvpView;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *RecyclerView Adapter to set up all the heroes
+ */
 public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHolder> {
 
     private static final String TAG = "HeroesAdapter";

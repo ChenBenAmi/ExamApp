@@ -6,7 +6,11 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.examApp.ui.home.HomeActivity;
 import com.example.examApp.R;
 
-
+/**
+ * @author Chen.
+ * @version 1 at 30/5/2019.
+ *Splash activity view
+ */
 public class SplashActivity extends AppCompatActivity implements SplashMvpView {
 
     private static final String TAG = "SplashActivity";
