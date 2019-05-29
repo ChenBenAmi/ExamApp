@@ -8,24 +8,20 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
-import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.JsonHero;
 import com.example.examapp.ui.base.BasePresenter;
 import com.example.examapp.ui.home.HomeMvpView;
 import com.example.examapp.ui.home.recyclerview.HeroesAdapter.HeroViewHolder;
 import com.example.examapp.ui.image.ViewImage;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -171,18 +167,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
     }
 
 
-    @Override
-    public void deleteDb() {
-        mDataManager.clearSharedPref();
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                mDataManager.clearTable();
-                buildRetroFit(getMvpView().getRecyclerView(), getMvpView().getHeroesAdapter());
-            }
-        });
-
-    }
 
     @Override
     public String getImage() {

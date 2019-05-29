@@ -2,13 +2,10 @@ package com.example.examapp.ui.image;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.R;
-import com.example.examapp.ui.home.recyclerview.HeroesPresenter;
 import com.github.chrisbanes.photoview.PhotoView;
 
 import butterknife.BindView;
@@ -20,7 +17,7 @@ import static com.example.examapp.ui.home.recyclerview.HeroesPresenter.HERO_URL;
 public class ViewImage extends AppCompatActivity implements ImageMvpView {
 
 
-    ImagePresenter mImagePresenter;
+    ImagePresenter<ViewImage> mImagePresenter;
 
     @BindView(R.id.myImage)
     PhotoView myImage;
@@ -31,7 +28,7 @@ public class ViewImage extends AppCompatActivity implements ImageMvpView {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_image);
         ButterKnife.bind(this);
-        mImagePresenter = new ImagePresenter(this);
+        mImagePresenter = new ImagePresenter<ViewImage>(this);
         mImagePresenter.onAttach(this);
 
         setImage();

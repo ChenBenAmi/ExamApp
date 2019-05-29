@@ -9,17 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.example.examapp.R;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
-import com.example.examapp.data.database.DbHelper;
 import com.example.examapp.data.network.JsonHero;
 import com.example.examapp.ui.base.MvpView;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 

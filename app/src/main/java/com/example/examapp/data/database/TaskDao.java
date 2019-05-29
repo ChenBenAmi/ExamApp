@@ -6,7 +6,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
-
 import java.util.List;
 
 @Dao
@@ -33,9 +32,6 @@ public interface TaskDao {
 
     @Query("SELECT * FROM Herolist")
     LiveData<List<DatabaseHero>> loadAllHeroes();
-
-    @Query("Delete FROM Herolist")
-    void clearTable();
 
 
 

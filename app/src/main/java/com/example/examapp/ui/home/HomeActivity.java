@@ -10,10 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.ImageView;
-
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examapp.R;
@@ -72,26 +69,6 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         mHeroesPresenter.onItemClicked(position, title);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.delete) {
-            mHeroesPresenter.buildRetroFit(mRecyclerView, mHeroesAdapter);
-            mHeroesPresenter.deleteDb();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
-
     @Override
     public void setObservable() {
         if (mHeroesPresenter.getAllHeroes() !=null) {
@@ -108,15 +85,6 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
 
     }
 
-    @Override
-    public RecyclerView getRecyclerView() {
-        return mRecyclerView;
-    }
-
-    @Override
-    public HeroesAdapter getHeroesAdapter() {
-        return mHeroesAdapter;
-    }
 
     @Override
     public void setUpImageFromSharedPrefs() {

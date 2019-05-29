@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
-import com.example.examapp.data.network.ApiHelper;
 import com.example.examapp.data.sharedPref.SharedPreferencesHelper;
 
 import java.util.List;
@@ -15,13 +14,11 @@ public class DataManager {
     private static DataManager instance;
     private final Context mContext;
     private DbHelper mDbHelper;
-    private ApiHelper mApiHelper;
     private SharedPreferencesHelper mSharedPreferencesHelper;
 
 
     private DataManager(Context context) {
         mContext = context;
-        mApiHelper = new ApiHelper();
         mSharedPreferencesHelper = new SharedPreferencesHelper(context);
         mDbHelper = DbHelper.getInstance(mContext);
     }
@@ -65,10 +62,6 @@ public class DataManager {
         return mDbHelper.taskDao().loadAllHeroes();
     }
 
-    public void clearTable() {
-        mDbHelper.taskDao().clearTable();
-
-    }
 
 
 
@@ -87,10 +80,6 @@ public class DataManager {
 
     public void setAppImage(String appImage) {
         mSharedPreferencesHelper.setAppImage(appImage);
-    }
-
-    public void clearSharedPref() {
-        mSharedPreferencesHelper.clear();
     }
 
 
