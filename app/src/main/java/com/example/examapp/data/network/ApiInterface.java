@@ -8,6 +8,6 @@ import retrofit2.http.GET;
 public interface ApiInterface {
 
 
-    @GET("androidexam.json")
-    Call<List<JsonHero>> getHeroes();
+  @GET("androidexam.json")
+  Call<List<JsonHero>> getHeroes();
 }
