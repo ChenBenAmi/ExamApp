@@ -5,22 +5,25 @@ import android.content.Context;
 
 import com.example.examapp.data.database.DatabaseHero;
 import com.example.examapp.data.database.DbHelper;
+import com.example.examapp.data.network.ApiHelper;
 import com.example.examapp.data.sharedPref.SharedPreferencesHelper;
 
 import java.util.List;
 
+import retrofit2.Retrofit;
+
 public class DataManager {
 
     private static DataManager instance;
-    private final Context mContext;
     private DbHelper mDbHelper;
     private SharedPreferencesHelper mSharedPreferencesHelper;
+    private ApiHelper mApiHelper;
 
 
     private DataManager(Context context) {
-        mContext = context;
         mSharedPreferencesHelper = new SharedPreferencesHelper(context);
-        mDbHelper = DbHelper.getInstance(mContext);
+        mDbHelper = DbHelper.getInstance(context);
+        mApiHelper = ApiHelper.getInstance();
     }
 
     public static synchronized DataManager getInstance(Context context) {
@@ -30,8 +33,8 @@ public class DataManager {
         return instance;
     }
 
-    public DbHelper getDbHelper() {
-        return mDbHelper;
+    public Retrofit getRetroFit() {
+        return mApiHelper.getRetrofit();
     }
 
     public void insertHero(DatabaseHero databaseHero) {
@@ -61,9 +64,6 @@ public class DataManager {
     public LiveData<List<DatabaseHero>> loadAllHeroes() {
         return mDbHelper.taskDao().loadAllHeroes();
     }
-
-
-
 
 
     public String getAppTitle() {

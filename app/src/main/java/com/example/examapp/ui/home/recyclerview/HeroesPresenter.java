@@ -13,6 +13,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.examapp.data.DataManager;
 import com.example.examapp.data.database.AppExecutors;
 import com.example.examapp.data.database.DatabaseHero;
+import com.example.examapp.data.network.ApiHelper;
 import com.example.examapp.data.network.ApiInterface;
 import com.example.examapp.data.network.JsonHero;
 import com.example.examapp.ui.base.BasePresenter;
@@ -47,13 +48,11 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
     @Override
     public void onBind(final HeroViewHolder heroViewHolder, final int position, final List<DatabaseHero> databaseHeroes) {
-        Log.i(TAG, "ON BIND TRIGGERED nr " + position);
         AppExecutors.getInstance().mainThread().execute(new Runnable() {
             @Override
             public void run() {
                 if (databaseHeroes.size() > 0) {
                     final DatabaseHero databaseHero = databaseHeroes.get(position);
-                    Log.i(TAG, "this is hero " + databaseHero.toString());
                     heroViewHolder.mHeroName.setText(databaseHero.getTitle());
                     heroViewHolder.mHeroAbilities.setText(databaseHero.getAbilities());
                     AppExecutors.getInstance().mainThread().execute(new Runnable() {
@@ -97,11 +96,8 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
 
     @Override
     public void buildRetroFit(final RecyclerView recyclerView, final HeroesAdapter heroesAdapter) {
-        Log.i(TAG, "nothing in db getting json");
-        Retrofit.Builder builder = new Retrofit.Builder()
-                .baseUrl("https://heroapps.co.il/employee-tests/android/")
-                .addConverterFactory(GsonConverterFactory.create());
-        Retrofit retrofit = builder.build();
+
+        Retrofit retrofit = mDataManager.getRetroFit();
         ApiInterface client = retrofit.create(ApiInterface.class);
         Call<List<JsonHero>> call = client.getHeroes();
 
@@ -190,7 +186,6 @@ public class HeroesPresenter<V extends HomeMvpView> extends BasePresenter<V> imp
             @Override
             public void run() {
                 if (mDataManager.checkFavoriteState(title)) {
-                    Log.i(TAG, "the value is true");
                 }
                 mDataManager.listToFalse();
                 final DatabaseHero databaseHero = mDataManager.getHeroByName(title);

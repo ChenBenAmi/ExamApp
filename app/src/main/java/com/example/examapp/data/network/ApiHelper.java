@@ -8,23 +8,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class ApiHelper {
 
-        public static Retrofit retrofit;
+    private static ApiHelper instance = new ApiHelper();
 
-        public static Retrofit getRetrofit(){
+    private ApiHelper() {
 
-            if(retrofit==null){
-                OkHttpClient.Builder builder = new OkHttpClient.Builder();
-                OkHttpClient okHttpClient = builder.build();
-
-                retrofit = new Retrofit.Builder()
-                        .baseUrl("http://api.themoviedb.org/3/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                        .client(okHttpClient)
-                        .build();
-
-            }
-
-            return retrofit;
-        }
     }
+
+    private static Retrofit retrofit;
+
+    public  Retrofit getRetrofit() {
+        if (retrofit == null) {
+            OkHttpClient.Builder builder = new OkHttpClient.Builder();
+            OkHttpClient okHttpClient = builder.build();
+
+            retrofit = new Retrofit.Builder()
+                    .baseUrl("https://heroapps.co.il/employee-tests/android/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .client(okHttpClient)
+                    .build();
+
+        }
+
+        return retrofit;
+    }
+
+    public static ApiHelper getInstance() {
+        return instance;
+    }
+}
