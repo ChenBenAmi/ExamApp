@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,6 +13,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.example.examApp.R;
@@ -27,11 +29,11 @@ import butterknife.ButterKnife;
 /**
  * @author Chen.
  * @version 1 at 30/5/2019.
- *Home activity the main view component
+ * Home activity the main view component
  */
 public class HomeActivity extends AppCompatActivity implements HomeMvpView, HeroesAdapter.listItemClickListener {
 
-    private static final String TAG = "HomeActivity";
+    private static final String TAG = HomeActivity.class.getCanonicalName();
     private HeroesPresenter<HomeActivity> mHeroesPresenter;
     private HeroesAdapter mHeroesAdapter;
 
@@ -47,8 +49,8 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     @BindView(R.id.title_image)
     ImageView mTitleImageView;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolBar;
+    @BindView(R.id.collapsing)
+    CollapsingToolbarLayout mCollapsingToolbarLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +109,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
     @Override
     public void setUpTitleFromSharedPrefs() {
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mHeroesPresenter.getTitle());
+            mCollapsingToolbarLayout.setTitle(mHeroesPresenter.getTitle());
         }
     }
 
@@ -132,7 +134,7 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
             public void run() {
                 mNestedScrollView.scrollTo(0, 0);
                 mApp_bar_layout.setExpanded(true);
-                getSupportActionBar().setTitle(title);
+                mCollapsingToolbarLayout.setTitle(title);
             }
         });
 
