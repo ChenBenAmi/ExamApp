@@ -32,13 +32,13 @@
     <style name="recycler_view_title_style">
         <item name="android:textColor">@color/colorBlack</item>
         <item name="android:textSize">@dimen/card_view_title_size</item>
-        <item name="android:fontFamily">@font/maiden_orange</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
     <style name="recycler_view_abilities_style">
         <item name="android:textColor">@color/darkerGray</item>
         <item name="android:textSize">@dimen/card_view_abilities_size</item>
-        <item name="android:fontFamily">@font/maiden_orange</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
     </style>
 
 </resources>

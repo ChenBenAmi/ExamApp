@@ -3,7 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
-    android:theme="@style/MainTheme"
     android:layout_height="@dimen/card_height"
     card_view:cardCornerRadius="4dp"
     android:layout_margin="5dp">
