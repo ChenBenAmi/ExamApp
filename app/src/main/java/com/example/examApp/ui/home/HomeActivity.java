@@ -139,6 +139,11 @@ public class HomeActivity extends AppCompatActivity implements HomeMvpView, Hero
         });
 
     }
+    @Override
+    protected void onDestroy() {
+        mHeroesPresenter.onDetach();
+        super.onDestroy();
+    }
 }
 
 

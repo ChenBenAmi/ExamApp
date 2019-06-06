@@ -22,6 +22,11 @@ public class BasePresenter<V extends MvpView> implements MvpPresenter<V> {
         mMvpView = mvpView;
     }
 
+    @Override
+    public void onDetach() {
+        mMvpView = null;
+    }
+
     public V getMvpView() {
         return mMvpView;
     }

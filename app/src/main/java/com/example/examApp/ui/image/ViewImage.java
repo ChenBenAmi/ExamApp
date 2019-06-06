@@ -46,4 +46,9 @@ public class ViewImage extends AppCompatActivity implements ImageMvpView {
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(myImage);
     }
+    @Override
+    protected void onDestroy() {
+        mImagePresenter.onDetach();
+        super.onDestroy();
+    }
 }

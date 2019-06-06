@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import com.example.examApp.ui.home.HomeActivity;
 import com.example.examApp.R;
 
+import javax.inject.Inject;
+
 /**
  * @author Chen.
  * @version 1 at 30/5/2019.
@@ -15,12 +17,15 @@ public class SplashActivity extends AppCompatActivity implements SplashMvpView {
 
     private static final String TAG = "SplashActivity";
 
+    @Inject
+    SplashPresenter<SplashActivity> mSplashPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         setTitle(getResources().getString(R.string.app_name));
-        SplashPresenter<SplashActivity> mSplashPresenter = new SplashPresenter<>(this);
+
         mSplashPresenter.onAttach(this);
         mSplashPresenter.openHomeActivity();
 
@@ -34,5 +39,9 @@ public class SplashActivity extends AppCompatActivity implements SplashMvpView {
         finish();
     }
 
-
+    @Override
+    protected void onDestroy() {
+        mSplashPresenter.onDetach();
+        super.onDestroy();
+    }
 }
