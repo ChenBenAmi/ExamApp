@@ -18,6 +18,8 @@ import com.example.examApp.ui.base.MvpView;
 import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+
 /**
  * @author Chen.
  * @version 1 at 30/5/2019.
@@ -104,16 +106,6 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
             super(itemView);
             ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
-            mHeroImage.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    mHeroPresenter.imageToFull
-                            (mHeroEntries.get(getAdapterPosition())
-                                    .getImageUrl(), mHeroName.getText().toString());
-                }
-            });
-
-
         }
 
         @Override
@@ -121,6 +113,12 @@ public class HeroesAdapter extends RecyclerView.Adapter<HeroesAdapter.HeroViewHo
             int position = getAdapterPosition();
             String title = mHeroName.getText().toString();
             mOnClickListener.onListItemClick(position, title);
+        }
+        @OnClick(R.id.hero_image)
+        void onClickImage(View v) {
+            mHeroPresenter.imageToFull
+                    (mHeroEntries.get(getAdapterPosition())
+                            .getImageUrl(), mHeroName.getText().toString());
         }
 
 

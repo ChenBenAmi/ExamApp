@@ -23,7 +23,6 @@ public abstract class DbHelper extends RoomDatabase {
                 instance = Room.databaseBuilder(context
                         .getApplicationContext(), DbHelper
                         .class, DbHelper.DATABASE_NAME)
-                        .fallbackToDestructiveMigration()
                         .build();
             }
         }

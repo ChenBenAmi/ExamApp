@@ -7,11 +7,12 @@ import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 import java.util.List;
-/**
+    /**
  * @author Chen.
  * @version 1 at 30/5/2019.
  *TaskDao have all the database methods
  */
+
 @Dao
 public interface TaskDao {
 
