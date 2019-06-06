@@ -7,7 +7,7 @@ import android.content.SharedPreferences;
  * @version 1 at 30/5/2019.
  *Shared preferences to store image url and title of the favorite hero
  */
-public class SharedPreferencesHelper {
+public class SharedPreferencesHelper implements PreferencesHelper {
 
     private static final String MY_PREFS = "MY_PREFS";
     private static final String APP_TITLE = "APP_TITLE";
