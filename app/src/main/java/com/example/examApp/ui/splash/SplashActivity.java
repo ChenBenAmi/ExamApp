@@ -17,15 +17,14 @@ public class SplashActivity extends AppCompatActivity implements SplashMvpView {
 
     private static final String TAG = "SplashActivity";
 
-    @Inject
-    SplashPresenter<SplashActivity> mSplashPresenter;
 
+    SplashPresenter<SplashActivity> mSplashPresenter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
         setTitle(getResources().getString(R.string.app_name));
-
+        mSplashPresenter=new SplashPresenter<>(this);
         mSplashPresenter.onAttach(this);
         mSplashPresenter.openHomeActivity();
 
